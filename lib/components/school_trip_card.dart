@@ -143,7 +143,7 @@ class SchoolTripCard extends StatelessWidget {
                       Container(
                         height: 8,
                         decoration: BoxDecoration(
-                          color: Colors.grey[800],
+                          color: AppColors.gray,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
