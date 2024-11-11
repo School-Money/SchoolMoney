@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_money/components/auth/register_screen.dart';
-import 'login_screen.dart';
+import 'package:school_money/screens/auth/register_screen.dart';
+import 'package:school_money/screens/auth/login_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});

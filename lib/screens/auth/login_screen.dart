@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:school_money/components/auth/auth_text_field.dart';
-import 'package:school_money/components/auth/two_color_clickable_text.dart';
 import 'package:school_money/constants/app_colors.dart';
+import 'package:school_money/components/auth/auth_button.dart';
+import 'package:school_money/screens/main/main_screen.dart';
 
-import 'auth_button.dart';
-
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class RegisterScreen extends StatelessWidget {
             child: SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.all(32.0),
-                color: Colors.grey[900],
+                color: AppColors.primary,
                 child: Flex(
                   direction: Axis.vertical,
                   children: [
@@ -43,7 +42,7 @@ class RegisterScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 8),
                         Text(
-                          'Register and manage your money!',
+                          'Sign in and start managing your money!',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white70,
@@ -66,25 +65,9 @@ class RegisterScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             const AuthTextField(
-                              hintText: 'First name',
-                              prefixIcon: Icons.person,
-                            ),
-                            const SizedBox(height: 16),
-                            const AuthTextField(
-                              hintText: 'Last name',
-                              prefixIcon: Icons.person,
-                            ),
-                            const SizedBox(height: 16),
-                            const AuthTextField(
                               hintText: 'Password',
                               prefixIcon: Icons.lock,
                               type: TextFieldVariant.password,
-                            ),
-                            const SizedBox(height: 16),
-                            const AuthTextField(
-                              hintText: 'Repeat password',
-                              prefixIcon: Icons.lock,
-                              type: TextFieldVariant.repeatPassword,
                             ),
                             const SizedBox(height: 4),
                             Align(
@@ -99,20 +82,23 @@ class RegisterScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 32),
                             AuthButton(
-                              text: 'Register',
-                              onPressed: () {},
+                              text: 'Sign in',
+                              onPressed: () {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => const MainScreen()
+                                  ),
+                                );
+                              },
                               variant: ButtonVariant.primary,
                             ),
                             const SizedBox(height: 16),
-                            Align(
-                              alignment: Alignment.center,
-                              child: TwoColorClickableText(
-                                firstPart: 'Already have an account?',
-                                secondPart: 'Sign in',
-                                onTap: () {
-                                  Navigator.of(context).pushNamed('/login');
-                                },
-                              ),
+                            AuthButton(
+                              text: 'Register',
+                              onPressed: () {
+                                Navigator.of(context).pushNamed('/register');
+                              },
+                              variant: ButtonVariant.alternative,
                             ),
                           ],
                         ),
