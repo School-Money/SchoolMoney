@@ -7,12 +7,14 @@ class AuthTextField extends StatefulWidget {
   final String hintText;
   final IconData prefixIcon;
   final TextFieldVariant type;
+  final TextEditingController? controller;
 
   const AuthTextField({
     super.key,
     required this.hintText,
     required this.prefixIcon,
     this.type = TextFieldVariant.common,
+    this.controller,
   });
 
   @override
@@ -43,6 +45,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         ],
       ),
       child: TextField(
+        controller: widget.controller,
         style: TextStyle(color: AppColors.secondary),
         obscureText:
             widget.type != TextFieldVariant.common ? _obscureText : false,

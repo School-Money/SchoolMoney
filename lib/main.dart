@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:school_money/components/auth/auth_wrapper.dart';
 import 'package:school_money/constants/app_colors.dart';
+import 'package:provider/provider.dart';
+import 'package:school_money/screens/main/main_screen.dart';
+import 'auth/auth_provider.dart';
 
-void main() {
-  runApp(const App());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final authProvider = AuthProvider();
+  await authProvider.checkAuthStatus();
+
+  await dotenv.load(fileName: ".env");
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider.value(value: authProvider),
+      ],
+      child: const App(),
+    ),
+  );
 }
 
 class App extends StatelessWidget {
@@ -18,8 +36,12 @@ class App extends StatelessWidget {
       ),
       themeMode: ThemeMode.light,
       debugShowCheckedModeBanner: false,
-      home: const Scaffold(
-        body: AuthWrapper(),
+      home: Scaffold(
+        body: Consumer<AuthProvider>(
+          builder: (context, auth, _) {
+            return auth.isLoggedIn ? const MainScreen() : const AuthWrapper();
+          },
+        ),
       ),
     );
   }

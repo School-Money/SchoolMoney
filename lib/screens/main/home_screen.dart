@@ -119,6 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: _isLoadingStudents
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
+                      clipBehavior: Clip.none,
                       scrollDirection: Axis.horizontal,
                       itemCount: _students.length,
                       itemBuilder: (context, index) {
@@ -148,6 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: _isLoadingSchoolTrips
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
+                      clipBehavior: Clip.none,
                       scrollDirection: Axis.horizontal,
                       itemCount: _schoolTrips.length,
                       itemBuilder: (context, index) {
@@ -182,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: _isLoadingParentTransactions
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
+                      clipBehavior: Clip.none,
                       scrollDirection: Axis.horizontal,
                       itemCount: _parentTransactions.length,
                       itemBuilder: (context, index) {
