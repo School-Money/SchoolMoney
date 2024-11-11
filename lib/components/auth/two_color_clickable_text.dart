@@ -40,7 +40,7 @@ class _TwoColorClickableTextState extends State<TwoColorClickableText> {
               TextSpan(
                 text: widget.firstPart,
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
+                  color: AppColors.gray,
                 ),
               ),
               TextSpan(

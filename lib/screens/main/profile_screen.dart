@@ -11,8 +11,13 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: TextButton(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(
+            AppColors.red,
+          ),
+        ),
         onPressed: () => {context.read<AuthProvider>().logout()},
-        child: const Text('Logout'),
+        child: Text('Logout', style: TextStyle(color: AppColors.secondary)),
       ),
     );
   }

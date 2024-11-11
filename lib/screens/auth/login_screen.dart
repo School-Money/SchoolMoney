@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Login successful'),
-          backgroundColor: AppColors.green,
+          backgroundColor: AppColors.green.withOpacity(0.5),
         ),
       );
     } else {
@@ -71,23 +71,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Flex(
                   direction: Axis.vertical,
                   children: [
-                    const Column(
+                    Column(
                       children: [
                         Text(
                           'School & Money',
                           style: TextStyle(
                             fontSize: 52,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColors.secondary,
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           'Sign in and start managing your money!',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.white70,
+                            color: AppColors.gray,
                           ),
                           textAlign: TextAlign.center,
                         ),
