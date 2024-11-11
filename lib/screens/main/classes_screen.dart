@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/components/main/search_text_field.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/components/main/class_card.dart';
@@ -97,6 +98,22 @@ class ClassesScreenState extends State<ClassesScreen> {
                   }
                 },
               ),
+            ),
+            OverflowBar(
+              alignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: SizedBox(
+                    height: 40,
+                    width: 200,
+                    child: AuthButton(
+                      text: 'Create class',
+                      onPressed: () {},
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
