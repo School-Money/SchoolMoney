@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_money/components/main/main_top_bar.dart';
+import 'package:school_money/components/main/main_top_bar_drawer.dart';
 import 'package:school_money/screens/main/profile_screen.dart';
 
 import 'classes_screen.dart';
@@ -26,16 +27,19 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          MainTopBar(
-            currentPage: currentPage,
-            onPageSelected: _navigateToPage,
-          ),
-          Expanded(
-            child: _buildPageContent(),
-          ),
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: MainTopBar(
+          currentPage: currentPage,
+          onPageSelected: _navigateToPage,
+        ),
+      ),
+      drawer: MainTopBarDrawer(
+        currentPage: currentPage,
+        onPageSelected: _navigateToPage,
+      ),
+      body: Expanded(
+        child: _buildPageContent(),
       ),
     );
   }
