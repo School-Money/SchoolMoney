@@ -3,6 +3,7 @@ import 'package:school_money/components/auth/auth_text_field.dart';
 import 'package:school_money/components/auth/two_color_clickable_text.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/components/auth/auth_button.dart';
+import 'package:school_money/screens/main/main_screen.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -100,7 +101,11 @@ class RegisterScreen extends StatelessWidget {
                             AuthButton(
                               text: 'Register',
                               onPressed: () {
-                                Navigator.of(context).pushNamed('/home');
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (context) => const MainScreen()
+                                  ),
+                                );
                               },
                               variant: ButtonVariant.primary,
                             ),
