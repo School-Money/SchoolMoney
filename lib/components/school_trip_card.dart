@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/app_colors.dart';
+
 class SchoolTripCard extends StatelessWidget {
   final String imageUrl;
   final String title;
@@ -30,7 +32,7 @@ class SchoolTripCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
       ),
-      color: const Color(0xFF2D2D2D),
+      color: AppColors.primary,
       child: InkWell(
         onTap: onTap,
         child: Column(
@@ -39,7 +41,6 @@ class SchoolTripCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                // Image
                 AspectRatio(
                   aspectRatio: 16 / 9,
                   child: Image.network(
@@ -47,13 +48,13 @@ class SchoolTripCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        color: Colors.grey[300],
+                        color: AppColors.gray,
                       );
                     },
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
                       return Container(
-                        color: Colors.grey[300],
+                        color: AppColors.gray,
                         child: const Center(
                           child: CircularProgressIndicator(),
                         ),
@@ -70,22 +71,22 @@ class SchoolTripCard extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.secondary,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.access_time,
                           size: 18,
-                          color: Colors.black,
+                          color: AppColors.primary,
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '$daysLeft days',
-                          style: const TextStyle(
-                            color: Colors.black,
+                          style: TextStyle(
+                            color: AppColors.primary,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -103,10 +104,10 @@ class SchoolTripCard extends StatelessWidget {
                   // Title
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: AppColors.secondary,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -114,7 +115,7 @@ class SchoolTripCard extends StatelessWidget {
                     className,
                     style: TextStyle(
                       fontSize: 14,
-                      color: Colors.grey[400],
+                      color: AppColors.gray,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -122,17 +123,17 @@ class SchoolTripCard extends StatelessWidget {
                     children: [
                       Text(
                         '${currentAmount.toInt()} zł',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: AppColors.secondary,
                         ),
                       ),
                       Text(
                         ' z ${targetAmount.toInt()} zł',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.grey[400],
+                          color: AppColors.gray,
                         ),
                       ),
                     ],
@@ -152,7 +153,7 @@ class SchoolTripCard extends StatelessWidget {
                         child: Container(
                           height: 8,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE6D5BA),
+                            color: AppColors.accent,
                             borderRadius: BorderRadius.circular(4),
                           ),
                         ),
@@ -165,10 +166,10 @@ class SchoolTripCard extends StatelessWidget {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         '$progressPercent%',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: Colors.white,
+                          color: AppColors.secondary,
                         ),
                       ),
                     )
@@ -179,10 +180,10 @@ class SchoolTripCard extends StatelessWidget {
                         alignment: Alignment.centerRight,
                         child: Text(
                           '$progressPercent%',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
-                            color: Colors.white,
+                            color: AppColors.secondary,
                           ),
                         ),
                       ),

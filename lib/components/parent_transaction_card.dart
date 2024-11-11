@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_money/constants/app_colors.dart';
 
 class ParentTransactionCard extends StatelessWidget {
   final String imageUrl;
@@ -39,32 +40,32 @@ class ParentTransactionCard extends StatelessWidget {
               CircleAvatar(
                 radius: 40,
                 backgroundImage: NetworkImage(imageUrl),
-                backgroundColor: Colors.grey[300],
+                backgroundColor: AppColors.gray,
               ),
               const SizedBox(height: 8),
               Text(
                 firstName,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.white,
+                  color: AppColors.secondary,
                 ),
               ),
               Text(
                 lastName,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.white,
+                  color: AppColors.secondary,
                 ),
               ),
               Text(
                 transactionName,
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey[400],
+                  color: AppColors.gray,
                 ),
               ),
               Text(
@@ -72,7 +73,7 @@ class ParentTransactionCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
-                  color: isPositive ? Colors.green : Colors.red,
+                  color: isPositive ? AppColors.green : AppColors.red,
                 ),
               ),
             ],

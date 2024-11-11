@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_money/constants/app_colors.dart';
 
 import '../../components/parent_transaction_card.dart';
 import '../../components/school_trip_card.dart';
@@ -104,12 +105,12 @@ class _HomeScreenState extends State<HomeScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            const Text(
+            Text(
               'Your children',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppColors.secondary,
               ),
             ),
             const SizedBox(height: 16),
@@ -127,20 +128,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           firstName: student.firstName,
                           lastName: student.lastName,
                           className: student.className,
-                          onTap: () {
-                            // Handle student tap
-                          },
+                          onTap: () {},
                         );
                       },
                     ),
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'Open collections',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppColors.secondary,
               ),
             ),
             const SizedBox(height: 16),
@@ -162,21 +161,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             daysLeft: collection.daysLeft,
                             currentAmount: collection.currentAmount,
                             targetAmount: collection.targetAmount,
-                            onTap: () {
-                              // Handle collection tap
-                            },
+                            onTap: () {},
                           ),
                         );
                       },
                     ),
             ),
             const SizedBox(height: 24),
-            const Text(
+            Text(
               'Last expenses',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppColors.secondary,
               ),
             ),
             const SizedBox(height: 16),
@@ -195,9 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           lastName: transaction.lastName,
                           transactionName: transaction.transactionName,
                           amount: transaction.amount,
-                          onTap: () {
-                            // Handle transaction tap
-                          },
+                          onTap: () {},
                         );
                       },
                     ),

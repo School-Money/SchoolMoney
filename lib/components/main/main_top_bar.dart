@@ -77,12 +77,14 @@ class MainTopBar extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () => onPageSelected('/profile'),
                     child: Container(
-                      padding: const EdgeInsets.all(2), // Space between border and avatar
+                      padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: currentPage == '/profile' ? AppColors.accent : Colors.transparent,
-                          width: 2, // Border width
+                          color: currentPage == '/profile'
+                              ? AppColors.accent
+                              : Colors.transparent,
+                          width: 2,
                         ),
                       ),
                       child: CircleAvatar(

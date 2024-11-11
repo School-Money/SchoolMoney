@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_money/constants/app_colors.dart';
 
 class StudentCard extends StatelessWidget {
   final String imageUrl;
@@ -32,22 +33,22 @@ class StudentCard extends StatelessWidget {
                 CircleAvatar(
                   radius: 40,
                   backgroundImage: NetworkImage(imageUrl),
-                  backgroundColor: Colors.grey[300],
+                  backgroundColor: AppColors.gray,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   firstName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
-                    color: Colors.white,
+                    color: AppColors.secondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 Text(
                   lastName,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
-                    color: Colors.white,
+                    color: AppColors.secondary,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -55,7 +56,7 @@ class StudentCard extends StatelessWidget {
                   className,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey[600],
+                    color: AppColors.gray,
                   ),
                 ),
               ],
