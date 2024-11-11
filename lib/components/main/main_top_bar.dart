@@ -31,16 +31,19 @@ class MainTopBar extends StatelessWidget {
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'School & Money',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.secondary,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.white),
+                  icon: Icon(
+                    Icons.menu,
+                    color: AppColors.secondary,
+                  ),
                   onPressed: () {
                     Scaffold.of(context).openDrawer();
                   },
@@ -50,10 +53,10 @@ class MainTopBar extends StatelessWidget {
           } else {
             return Row(
               children: [
-                const Text(
+                Text(
                   'School & Money',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.secondary,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),

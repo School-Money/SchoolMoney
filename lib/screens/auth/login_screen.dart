@@ -1,11 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:school_money/components/auth/auth_text_field.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/screens/main/main_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+import '../../auth/auth_provider.dart';
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _handleLogin() async {
+    setState(() => _isLoading = true);
+
+    final success = await context.read<AuthProvider>().login(
+          _emailController.text,
+          _passwordController.text,
+        );
+
+    setState(() => _isLoading = false);
+
+    if (success) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const MainScreen()),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Login successful'),
+          backgroundColor: AppColors.green.withOpacity(0.5),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Login failed'),
+          backgroundColor: AppColors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,23 +71,23 @@ class LoginScreen extends StatelessWidget {
                 child: Flex(
                   direction: Axis.vertical,
                   children: [
-                    const Column(
+                    Column(
                       children: [
                         Text(
                           'School & Money',
                           style: TextStyle(
                             fontSize: 52,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColors.secondary,
                           ),
                           textAlign: TextAlign.center,
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           'Sign in and start managing your money!',
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.white70,
+                            color: AppColors.gray,
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -59,12 +101,14 @@ class LoginScreen extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            const AuthTextField(
+                            AuthTextField(
+                              controller: _emailController,
                               hintText: 'Email',
                               prefixIcon: Icons.email,
                             ),
                             const SizedBox(height: 16),
-                            const AuthTextField(
+                            AuthTextField(
+                              controller: _passwordController,
                               hintText: 'Password',
                               prefixIcon: Icons.lock,
                               type: TextFieldVariant.password,
@@ -84,11 +128,7 @@ class LoginScreen extends StatelessWidget {
                             AuthButton(
                               text: 'Sign in',
                               onPressed: () {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                      builder: (context) => const MainScreen()
-                                  ),
-                                );
+                                _isLoading ? null : _handleLogin();
                               },
                               variant: ButtonVariant.primary,
                             ),
