@@ -7,11 +7,13 @@ class AuthButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
   final ButtonVariant variant;
+  final TextStyle? customTextStyle;
 
   const AuthButton({
     super.key,
     required this.text,
     required this.onPressed,
+    this.customTextStyle,
     this.variant = ButtonVariant.primary,
   });
 
@@ -46,7 +48,7 @@ class AuthButton extends StatelessWidget {
           child: Center(
             child: Text(
               text,
-              style: TextStyle(
+              style: customTextStyle ?? TextStyle(
                 color: variant == ButtonVariant.primary
                     ? AppColors.primary
                     : AppColors.secondary,

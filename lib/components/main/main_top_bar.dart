@@ -25,39 +25,78 @@ class MainTopBar extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        children: [
-          const Text(
-            'School & Money',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const Spacer(),
-          Expanded(
-            child: Row(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 700) {
+            return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildNavAction('Home', '/home'),
-                _buildNavAction('Collections', '/collections'),
-                _buildNavAction('Expenses', '/expenses'),
-                _buildNavAction('Classes', '/classes'),
+                const Text(
+                  'School & Money',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.menu, color: Colors.white),
+                  onPressed: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                ),
+              ],
+            );
+          } else {
+            return Row(
+              children: [
+                const Text(
+                  'School & Money',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildNavAction('Home', '/home'),
+                    const SizedBox(width: 16),
+                    _buildNavAction('Collections', '/collections'),
+                    const SizedBox(width: 16),
+                    _buildNavAction('Expenses', '/expenses'),
+                    const SizedBox(width: 16),
+                    _buildNavAction('Classes', '/classes'),
+                    const SizedBox(width: 16),
+                  ],
+                ),
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
                     onTap: () => onPageSelected('/profile'),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.grey[300],
-                      child: Icon(Icons.person, color: Colors.blueGrey[900]),
+                    child: Container(
+                      padding: const EdgeInsets.all(2), // Space between border and avatar
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: currentPage == '/profile' ? AppColors.accent : Colors.transparent,
+                          width: 2, // Border width
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.grey[300],
+                        child: Icon(Icons.person, color: Colors.blueGrey[900]),
+                      ),
                     ),
                   ),
                 ),
               ],
-            ),
-          ),
-        ],
+            );
+          }
+        },
       ),
     );
   }
