@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'auth_service.dart';
+import 'model/auth_result.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -13,13 +14,31 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(String email, String password) async {
-    final success = await _authService.login(email, password);
-    if (success) {
+  Future<AuthResult> login({
+    required String email,
+    required String password,
+  }) async {
+    final result = await _authService.login(email, password);
+    if (result.success) {
       _isLoggedIn = true;
       notifyListeners();
     }
-    return success;
+    return result;
+  }
+
+  Future<AuthResult> register({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+  }) async {
+    final result = await _authService.register(
+      email: email,
+      password: password,
+      firstName: firstName,
+      lastName: lastName,
+    );
+    return result;
   }
 
   Future<void> logout() async {

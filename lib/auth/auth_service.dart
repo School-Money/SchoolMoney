@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
+import 'model/auth_result.dart';
+
 class AuthService {
   final Dio _dio = Dio();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -24,7 +26,7 @@ class AuthService {
     await _storage.delete(key: _tokenKey);
   }
 
-  Future<bool> login(String email, String password) async {
+  Future<AuthResult> login(String email, String password) async {
     try {
       final response = await _dio.post(
         '$_baseUrl/auth/login',
@@ -41,13 +43,59 @@ class AuthService {
 
       if (response.statusCode == 201 && response.data['accessToken'] != null) {
         await saveToken(response.data['accessToken']);
-        return true;
+        return AuthResult.success();
       }
-      print(response.data);
-      return false;
+
+      return AuthResult.failure(response.data['message'] ?? 'Login failed');
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 401) {
+        return AuthResult.failure(
+            e.response?.data['message'] ?? 'Invalid credentials');
+      }
+      return AuthResult.failure(
+          e.response?.data['message'] ?? 'Something went wrong');
     } catch (e) {
-      print(e);
-      return false;
+      return AuthResult.failure('Something went wrong');
+    }
+  }
+
+  Future<AuthResult> register({
+    required String email,
+    required String password,
+    required String firstName,
+    required String lastName,
+  }) async {
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/auth/register',
+        data: {
+          'email': email,
+          'password': password,
+          'firstName': firstName,
+          'lastName': lastName,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 201) {
+        return AuthResult.success();
+      }
+
+      return AuthResult.failure(
+          response.data['message'] ?? 'Registration failed');
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 409) {
+        return AuthResult.failure(
+            e.response?.data['message'] ?? 'User already exists');
+      }
+      return AuthResult.failure(
+          e.response?.data['message'] ?? 'Something went wrong');
+    } catch (e) {
+      return AuthResult.failure('Something went wrong');
     }
   }
 
