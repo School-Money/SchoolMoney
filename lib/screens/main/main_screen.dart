@@ -38,9 +38,7 @@ class _MainScreenState extends State<MainScreen> {
         currentPage: currentPage,
         onPageSelected: _navigateToPage,
       ),
-      body: Expanded(
-        child: _buildPageContent(),
-      ),
+      body: _buildPageContent(),
     );
   }
 
