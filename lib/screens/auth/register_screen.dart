@@ -37,6 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (mounted) {
       if (result.success) {
+        ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Register successful, you can login now'),
@@ -45,6 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
         Navigator.of(context).pushNamed('/login');
       } else {
+        ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result.errorMessage ?? 'Registration failed'),
