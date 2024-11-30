@@ -61,18 +61,20 @@ class AuthService {
 
   Future<AuthResult> register({
     required String email,
-    required String password,
     required String firstName,
     required String lastName,
+    required String password,
+    required String repeatPassword,
   }) async {
     try {
       final response = await _dio.post(
         '$_baseUrl/auth/register',
         data: {
           'email': email,
-          'password': password,
           'firstName': firstName,
           'lastName': lastName,
+          'password': password,
+          'repeatPassword': repeatPassword,
         },
         options: Options(
           headers: {

@@ -28,15 +28,17 @@ class AuthProvider extends ChangeNotifier {
 
   Future<AuthResult> register({
     required String email,
-    required String password,
     required String firstName,
     required String lastName,
+    required String password,
+    required String repeatPassword,
   }) async {
     final result = await _authService.register(
       email: email,
-      password: password,
       firstName: firstName,
       lastName: lastName,
+      password: password,
+      repeatPassword: repeatPassword,
     );
     return result;
   }

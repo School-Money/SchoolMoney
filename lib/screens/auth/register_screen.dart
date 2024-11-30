@@ -28,9 +28,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     final result = await context.read<AuthProvider>().register(
           email: _emailController.text,
-          password: _passwordController.text,
           firstName: _firstNameController.text,
           lastName: _lastNameController.text,
+          password: _passwordController.text,
+          repeatPassword: _repeatPasswordController.text,
         );
 
     setState(() => _isLoading = false);
