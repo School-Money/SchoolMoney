@@ -6,16 +6,32 @@ import 'model/class.dart';
 class ClassesProvider extends ChangeNotifier {
   final ClassesService _classesService = ClassesService();
   List<Class> _classes = [];
+  bool _isLoading = false;
 
   List<Class> get classes => _classes;
+  bool get isLoading => _isLoading;
 
   Future<void> getMyClasses() async {
+    _isLoading = true;
+    notifyListeners();
+
     try {
       final newClasses = await _classesService.getMyClasses();
       _classes = newClasses;
-      notifyListeners();
     } catch (e) {
       // nothing, _classes doesn't update
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<String?> getInviteCode(String classId) async {
+    try {
+      return await _classesService.getInviteCode(classId);
+    } catch (e) {
+      print(e);
+      return null;
     }
   }
 }

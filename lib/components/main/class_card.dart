@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/constants/app_colors.dart';
+import 'package:school_money/feature/classes/classes_provider.dart';
+import 'package:school_money/feature/classes/model/class.dart';
 
 class ClassCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final int numberOfUsers;
-  final bool isTreasurer;
+  final Class classDetails;
   final VoidCallback onShowDetailsClicked;
   final VoidCallback onEditClassClicked;
 
   const ClassCard({
     super.key,
-    required this.title,
-    required this.subtitle,
-    required this.numberOfUsers,
-    this.isTreasurer = false,
+    required this.classDetails,
     required this.onShowDetailsClicked,
     required this.onEditClassClicked,
   });
@@ -61,7 +59,7 @@ class ClassCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            title,
+                            classDetails.name,
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -71,7 +69,7 @@ class ClassCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            subtitle,
+                            'Created: ${classDetails.createdAt.toLocal().toString().split(' ')[0]}',
                             style: TextStyle(
                               fontSize: 14,
                               color: AppColors.gray,
@@ -79,6 +77,56 @@ class ClassCard extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          if (classDetails.isTreasurer) ...[
+                            const SizedBox(height: 8),
+                            GestureDetector(
+                              onTap: () async {
+                                final inviteCode = await context
+                                    .read<ClassesProvider>()
+                                    .getInviteCode(classDetails.id);
+                                if (context.mounted) {
+                                  if (inviteCode == null) {
+                                    ScaffoldMessenger.of(context)
+                                        .clearSnackBars();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: const Text(
+                                            'Failed to get invite code'),
+                                        backgroundColor:
+                                            AppColors.red.withOpacity(0.5),
+                                      ),
+                                    );
+                                    return;
+                                  } else {
+                                    Clipboard.setData(
+                                      ClipboardData(text: inviteCode),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .clearSnackBars();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content:
+                                            const Text('Invite code copied'),
+                                        backgroundColor:
+                                            AppColors.green.withOpacity(0.5),
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              child: MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: Text(
+                                  'Get invite code',
+                                  style: TextStyle(
+                                    color: AppColors.accent,
+                                    fontSize: 14,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -93,7 +141,7 @@ class ClassCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '$numberOfUsers',
+                          '${classDetails.childrenAmount}',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
@@ -123,7 +171,7 @@ class ClassCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (isTreasurer) ...[
+                      if (classDetails.isTreasurer) ...[
                         const SizedBox(width: 16),
                         SizedBox(
                           height: 36,

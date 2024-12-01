@@ -55,8 +55,10 @@ class SchoolTripCard extends StatelessWidget {
                       if (loadingProgress == null) return child;
                       return Container(
                         color: AppColors.gray,
-                        child: const Center(
-                          child: CircularProgressIndicator(),
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.accent,
+                          ),
                         ),
                       );
                     },
