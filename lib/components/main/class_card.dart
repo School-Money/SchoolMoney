@@ -6,12 +6,18 @@ class ClassCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final int numberOfUsers;
+  final bool isTreasurer;
+  final VoidCallback onShowDetailsClicked;
+  final VoidCallback onEditClassClicked;
 
   const ClassCard({
     super.key,
     required this.title,
     required this.subtitle,
     required this.numberOfUsers,
+    this.isTreasurer = false,
+    required this.onShowDetailsClicked,
+    required this.onEditClassClicked,
   });
 
   @override
@@ -100,19 +106,41 @@ class ClassCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Center(
-                  child: SizedBox(
-                    height: 36,
-                    width: 120,
-                    child: AuthButton(
-                      text: 'Show Details',
-                      onPressed: () {},
-                      variant: ButtonVariant.alternative,
-                      customTextStyle: TextStyle(
-                        color: AppColors.secondary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: 36,
+                        width: 120,
+                        child: AuthButton(
+                          text: 'Show Details',
+                          onPressed: () {},
+                          variant: ButtonVariant.alternative,
+                          customTextStyle: TextStyle(
+                            color: AppColors.secondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
+                      if (isTreasurer) ...[
+                        const SizedBox(width: 16),
+                        SizedBox(
+                          height: 36,
+                          width: 120,
+                          child: AuthButton(
+                            text: 'Edit class',
+                            onPressed: () {},
+                            variant: ButtonVariant.alternative,
+                            customTextStyle: TextStyle(
+                              color: AppColors.secondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ],

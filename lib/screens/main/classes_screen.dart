@@ -172,6 +172,14 @@ class ClassesScreenState extends State<ClassesScreen> {
                             subtitle:
                                 'Created: ${classItem.createdAt.toLocal().toString().split(' ')[0]}',
                             numberOfUsers: classItem.childrenAmount,
+                            isTreasurer: classItem.isTreasurer,
+                            onShowDetailsClicked: () {
+                              Navigator.of(context).pushNamed(
+                                '/class',
+                                arguments: classItem.id,
+                              );
+                            },
+                            onEditClassClicked: () {},
                           );
                         },
                       );
