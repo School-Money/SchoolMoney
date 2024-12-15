@@ -29,13 +29,13 @@ class _ChatDialogState extends State<ChatDialog> {
     _chatManager = ChatManager(
       classId: widget.classId,
       socket: SocketService.instance.socket,
+      currentUserId: widget.userEmail,
       onMessagesUpdated: (messages) {
         if (!mounted) return;
         setState(() {
-          _messages = messages;
+          _messages = List.from(messages); // Create a new list to trigger rebuild
         });
       },
-      currentUserId: widget.userEmail,
     );
   }
 
@@ -58,7 +58,14 @@ class _ChatDialogState extends State<ChatDialog> {
         child: Chat(
           messages: _messages,
           onSendPressed: _handleSendPressed,
-          user: types.User(id: widget.userEmail),
+          user: types.User(
+            id: widget.userEmail,
+            firstName: 'Current User', // Add appropriate user name
+          ),
+          theme: DefaultChatTheme(
+            // Add custom theme if needed
+            backgroundColor: Colors.white,
+          ),
         ),
       ),
     );

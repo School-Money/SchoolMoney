@@ -30,10 +30,14 @@ class ChatManager {
   }
 
   void sendMessage(String content) {
-    socket.emit('sendMessageClass', {
-      'classId': classId,
-      'content': content,
-    });
+    try {
+      socket.emit('sendMessageClass', {
+        'classId': classId,
+        'content': content,
+      });
+    } catch (e) {
+      print('Error sending message: $e');
+    }
   }
 
   List<types.Message> _convertMessages(dynamic messages) {
@@ -41,25 +45,23 @@ class ChatManager {
 
     try {
       final List messagesList = messages is List ? messages : [messages];
-      var messagesMapped = messagesList.map((message) {
+
+      return messagesList.map((message) {
         return types.TextMessage(
           author: types.User(
-            id: message['sender'] ?? '', // Use sender ID from your backend
+            id: message['sender'] ?? '',
+            firstName: 'User', // Add a default name or get from your backend
           ),
-          id: DateTime.now()
-              .millisecondsSinceEpoch
-              .toString(), // Generate unique ID if not provided
+          id: message['_id'] ??
+              DateTime.now().millisecondsSinceEpoch.toString(),
           text: message['content'] ?? '',
           createdAt:
               DateTime.parse(message['createdAt']).millisecondsSinceEpoch,
         );
       }).toList();
-
-      print(messagesMapped);
-
-      return messagesMapped;
-    } catch (e) {
+    } catch (e, stackTrace) {
       print('Error converting messages: $e');
+      print('Stack trace: $stackTrace');
       return [];
     }
   }
