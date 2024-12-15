@@ -50,6 +50,8 @@ class _MainScreenState extends State<MainScreen> {
         return const ExpensesScreen();
       case '/classes':
         return const ClassesScreen();
+      case '/class':
+        return const ClassesScreen();
       case '/profile':
         return const ProfileScreen();
       case '/home':

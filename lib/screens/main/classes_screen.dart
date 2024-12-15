@@ -55,6 +55,7 @@ class ClassesScreenState extends State<ClassesScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: AppColors.primary,
           title: Text(
             'Create new class',
             style: TextStyle(
@@ -66,27 +67,47 @@ class ClassesScreenState extends State<ClassesScreen> {
             controller: _createClassController,
             decoration: InputDecoration(
               hintText: 'Enter class name',
+              hintStyle: TextStyle(color: AppColors.accent.withOpacity(0.5)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.accent),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.accent),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide(color: AppColors.accent, width: 2),
               ),
             ),
+            style: TextStyle(color: AppColors.accent),
+            cursorColor: AppColors.accent,
             autofocus: true,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: AppColors.secondary),
+              ),
             ),
             _isCreatingClass
-                ? const CircularProgressIndicator()
+                ? CircularProgressIndicator(
+                    color: AppColors.accent,
+                  )
                 : ElevatedButton(
                     onPressed: _createClass,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: AppColors.accent,
                     ),
-                    child: const Text(
+                    child: Text(
                       'Create class',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                        color: AppColors.secondary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
           ],
@@ -125,11 +146,32 @@ class ClassesScreenState extends State<ClassesScreen> {
             Expanded(
               child: Consumer<ClassesProvider>(
                 builder: (context, provider, child) {
+                  if (provider.isLoading) {
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.accent,
+                      ),
+                    );
+                  }
+
                   final filteredClasses = provider.classes
                       .where((classItem) => classItem.name
                           .toLowerCase()
                           .contains(_searchQuery.toLowerCase()))
                       .toList();
+
+                  if (filteredClasses.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No classes found',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.secondary,
+                        ),
+                      ),
+                    );
+                  }
 
                   return LayoutBuilder(
                     builder: (context, constraints) {
@@ -144,19 +186,6 @@ class ClassesScreenState extends State<ClassesScreen> {
                         crossAxisCount = 3;
                       }
 
-                      if (filteredClasses.isEmpty) {
-                        return Center(
-                          child: Text(
-                            'No classes found',
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.secondary,
-                            ),
-                          ),
-                        );
-                      }
-
                       return GridView.builder(
                         itemCount: filteredClasses.length,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -168,10 +197,14 @@ class ClassesScreenState extends State<ClassesScreen> {
                         itemBuilder: (context, index) {
                           final classItem = filteredClasses[index];
                           return ClassCard(
-                            title: classItem.name,
-                            subtitle:
-                                'Created: ${classItem.createdAt.toLocal().toString().split(' ')[0]}',
-                            numberOfUsers: classItem.childrenAmount,
+                            classDetails: classItem,
+                            onShowDetailsClicked: () {
+                              Navigator.of(context).pushNamed(
+                                '/class',
+                                arguments: classItem.id,
+                              );
+                            },
+                            onEditClassClicked: () {},
                           );
                         },
                       );

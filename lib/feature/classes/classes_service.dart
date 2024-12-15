@@ -59,13 +59,14 @@ class ClassesService {
     }
   }
 
-  Future<String> getInviteCode() async {
+  Future<String> getInviteCode(String classId) async {
     try {
-      final response = await _authService.authenticatedDio.get(
+      final response = await _authService.authenticatedDio.post(
         '$_baseUrl/classes/invite',
+        data: {'classId': classId},
       );
 
-      return response.data.toString();
+      return response.data['inviteCode'].toString();
     } on DioException catch (e) {
       if (e.response != null) {
         throw Exception(
