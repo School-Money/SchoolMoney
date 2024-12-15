@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:school_money/feature/chats/socket_service.dart';
 
 import 'model/auth_result.dart';
 
@@ -43,6 +44,7 @@ class AuthService {
 
       if (response.statusCode == 201 && response.data['accessToken'] != null) {
         await saveToken(response.data['accessToken']);
+        SocketService.instance.initializeSocket(response.data['accessToken']);
         return AuthResult.success();
       }
 
@@ -107,6 +109,9 @@ class AuthService {
 
   Future<bool> isLoggedIn() async {
     final token = await getToken();
+    // if (token != null) {
+    //   SocketService.instance.initializeSocket(token);
+    // }
     return token != null;
   }
 

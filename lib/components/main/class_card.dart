@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:school_money/components/auth/auth_button.dart';
+import 'package:school_money/components/chat/chat_dialog.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/classes/classes_provider.dart';
 import 'package:school_money/feature/classes/model/class.dart';
@@ -17,6 +18,17 @@ class ClassCard extends StatelessWidget {
     required this.onShowDetailsClicked,
     required this.onEditClassClicked,
   });
+
+  void _showChatDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ChatDialog(
+          classId: classDetails.id,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -188,6 +200,21 @@ class ClassCard extends StatelessWidget {
                           ),
                         ),
                       ],
+                      const SizedBox(width: 16),
+                      SizedBox(
+                        height: 36,
+                        width: 120,
+                        child: AuthButton(
+                          text: 'Open Chat',
+                          onPressed: () => _showChatDialog(context),
+                          variant: ButtonVariant.alternative,
+                          customTextStyle: TextStyle(
+                            color: AppColors.secondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
