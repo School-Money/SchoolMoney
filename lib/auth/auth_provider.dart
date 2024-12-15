@@ -10,6 +10,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoggedIn => _isLoggedIn;
 
   Future<void> checkAuthStatus() async {
+    print('Checking auth status...');
     _isLoggedIn = await _authService.isLoggedIn();
     notifyListeners();
   }

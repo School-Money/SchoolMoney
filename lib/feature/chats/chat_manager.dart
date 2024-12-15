@@ -1,11 +1,16 @@
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:school_money/feature/chats/socket_service.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ChatManager {
   final String classId;
   final void Function(List<types.Message>) onMessagesUpdated;
   final IO.Socket socket;
   final String currentUserId; // Add this to identify the current user
+  List<types.Message> _currentMessages = [];
 
   ChatManager({
     required this.classId,
@@ -14,6 +19,7 @@ class ChatManager {
     required this.currentUserId,
   }) {
     _setup();
+    fetchInitialMessages();
   }
 
   void _setup() {
@@ -37,6 +43,31 @@ class ChatManager {
       });
     } catch (e) {
       print('Error sending message: $e');
+    }
+  }
+
+  Future<void> fetchInitialMessages() async {
+    try {
+      final response = await http.get(
+        Uri.parse('${dotenv.env['BASE_URL']}/chat/class?classId=$classId'),
+        headers: {
+          'Authorization': SocketService.instance.accessToken,
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final convertedMessages = _convertMessages(data['messages'] ??
+            []); // Adjust the path based on your response structure
+        _currentMessages = convertedMessages;
+        onMessagesUpdated(_currentMessages);
+      } else {
+        print('Error fetching messages: ${response.statusCode}');
+        print('Response: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching initial messages: $e');
     }
   }
 

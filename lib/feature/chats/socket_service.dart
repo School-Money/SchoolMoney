@@ -5,7 +5,7 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 class SocketService {
   static SocketService? _instance;
   late IO.Socket socket;
-  late String headers;
+  late String accessToken;
 
   // Singleton pattern
   static SocketService get instance {
@@ -24,7 +24,7 @@ class SocketService {
             .setAuth({'token': 'Bearer $token'})
             .enableAutoConnect()
             .build());
-    headers = 'Bearer $token';
+    accessToken = 'Bearer $token';
 
     socket.connect();
 
@@ -49,7 +49,7 @@ class SocketService {
     // Ensure headers are included with every emit
     final Map<String, dynamic> payload = {
       ...data,
-      'headers': headers,
+      'headers': accessToken,
     };
     socket.emit(event, payload);
   }
