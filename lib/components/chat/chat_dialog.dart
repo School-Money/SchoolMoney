@@ -146,9 +146,10 @@ class _ChatDialogState extends State<ChatDialog> {
     return Chat(
       messages: _messages,
       onSendPressed: _handleSendPressed,
+      showUserAvatars: true,
+      showUserNames: true,
       user: types.User(
         id: _userId!,
-        firstName: 'Current User', // Add appropriate user name
       ),
       theme: DefaultChatTheme(
         backgroundColor: Colors.white,

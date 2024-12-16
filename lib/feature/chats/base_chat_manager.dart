@@ -33,10 +33,16 @@ abstract class BaseChatManager {
       final List messagesList = messages is List ? messages : [messages];
 
       return messagesList.map((message) {
+        final senderName = message['senderName'] as String? ?? '';
+        final nameParts = senderName.split(' ');
+        final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
+        final lastName = nameParts.length > 1 ? nameParts[1] : '';
+
         return types.TextMessage(
           author: types.User(
             id: message['sender'] ?? '',
-            firstName: 'User', // Add a default name or get from your backend
+            firstName: firstName,
+            lastName: lastName,
           ),
           id: message['_id'] ??
               DateTime.now().millisecondsSinceEpoch.toString(),
