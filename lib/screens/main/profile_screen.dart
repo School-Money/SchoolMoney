@@ -51,6 +51,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (profileProvider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
+        print('Is Loading: ${profileProvider.isLoading}');
+        print('Profile: ${profileProvider.profile}');
+        print('Avatar: ${profileProvider.avatar}');
 
         if (profileProvider.profile != null) {
           _emailController.text = profileProvider.profile!.email;
@@ -65,6 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             direction: Axis.vertical,
             children: [
               UserAvatar(
+                avatar: profileProvider.avatar,
                 name: profileProvider.profile != null
                     ? "${profileProvider.profile!.firstName} ${profileProvider.profile!.lastName}"
                     : "User",
