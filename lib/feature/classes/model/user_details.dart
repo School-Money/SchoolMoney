@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class UserDetails {
   final String id;
   final String email;
@@ -20,6 +22,11 @@ class UserDetails {
     );
   }
 
+  factory UserDetails.fromString(String jsonString) {
+    final Map<String, dynamic> json = const JsonDecoder().convert(jsonString);
+    return UserDetails.fromJson(json);
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -31,7 +38,7 @@ class UserDetails {
 
   @override
   String toString() {
-    return 'UserDetails{id: $id, email: $email, firstName: $firstName, lastName: $lastName}';
+    return '{"id": "$id", "email": "$email", "firstName": "$firstName", "lastName": "$lastName"}';
   }
 
   // Optional: Add a method to get full name

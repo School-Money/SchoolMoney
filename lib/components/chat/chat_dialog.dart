@@ -1,12 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:school_money/auth/auth_service.dart';
 import 'package:school_money/feature/chats/chat_manager.dart';
 import 'package:school_money/feature/chats/socket_service.dart';
-import 'package:http/http.dart' as http;
 
 class ChatDialog extends StatefulWidget {
   final String classId;
@@ -30,43 +27,21 @@ class _ChatDialogState extends State<ChatDialog> {
   @override
   void initState() {
     super.initState();
-    _fetchUserDetails();
+    _initializeChatManager();
   }
 
-  Future<void> _fetchUserDetails() async {
-    try {
-      final response = await http.get(
-        Uri.parse('${dotenv.env['BASE_URL']}/auth/user-details'),
-        headers: {
-          'Authorization': SocketService.instance.accessToken,
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final userData = json.decode(response.body);
-        setState(() {
-          _userId =
-              userData['id']; // adjust according to your response structure
-          _initializeChatManager();
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _error = 'Failed to load user details';
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      print('Error fetching user details: $e');
-      setState(() {
-        _error = 'Error loading user details';
-        _isLoading = false;
-      });
+  void _initializeChatManager() async {
+    var userDetails = await AuthService().getUserDetails();
+    if (userDetails!.id.isNotEmpty) {
+      _userId = userDetails.id;
     }
-  }
-
-  void _initializeChatManager() {
-    if (_userId == null) return;
+    if (_userId == null) {
+      print('UserId is null');
+      return;
+    }
+    setState(() {
+      _isLoading = false;
+    });
 
     _chatManager = ChatManager(
       classId: widget.classId,
@@ -124,7 +99,6 @@ class _ChatDialogState extends State<ChatDialog> {
                   _isLoading = true;
                   _error = null;
                 });
-                _fetchUserDetails();
               },
               child: const Text('Retry'),
             ),
