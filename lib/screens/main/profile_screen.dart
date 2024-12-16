@@ -6,6 +6,7 @@ import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/collection/children_provider.dart';
 import 'package:school_money/feature/collection/model/child_create_payload.dart';
 import 'package:school_money/feature/collection/ui/add_child_dialog.dart';
+import 'package:school_money/feature/profile/profile_provider.dart';
 import 'package:school_money/feature/profile/ui/user_avatar.dart';
 import '../../auth/auth_provider.dart';
 import '../../components/auth/auth_button.dart';
@@ -27,63 +28,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _lastNameController = TextEditingController();
 
   Widget _buildProfileSection() {
-    print(
-        'Building profile section, ${DateTime.parse('2017-12-12T23:00:00.000Z')}');
-    return Container(
-      padding: const EdgeInsets.all(32.0),
-      color: AppColors.primary,
-      child: Flex(
-        direction: Axis.vertical,
-        children: [
-          const UserAvatar(
-            name: "John Doe",
-          ),
-          const SizedBox(height: 16),
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 300),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AuthTextField(
-                    controller: _emailController,
-                    hintText: 'Email',
-                    prefixIcon: Icons.email,
-                  ),
-                  const SizedBox(height: 16),
-                  AuthTextField(
-                    controller: _firstNameController,
-                    hintText: 'First name',
-                    prefixIcon: Icons.person,
-                  ),
-                  const SizedBox(height: 16),
-                  AuthTextField(
-                    controller: _lastNameController,
-                    hintText: 'Last name',
-                    prefixIcon: Icons.person,
-                  ),
-                  const SizedBox(height: 16),
-                  AuthButton(
-                    text: 'Edit',
-                    onPressed: () {},
-                    variant: ButtonVariant.primary,
-                  ),
-                  const SizedBox(height: 16),
-                  AuthButton(
-                    text: 'Logout',
-                    onPressed: () {
-                      context.read<AuthProvider>().logout();
-                    },
-                    variant: ButtonVariant.alternative,
-                  ),
-                ],
+    return Consumer<ProfileProvider>(
+      builder: (context, profileProvider, child) {
+        if (profileProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (profileProvider.profile != null) {
+          _emailController.text = profileProvider.profile!.email;
+          _firstNameController.text = profileProvider.profile!.firstName;
+          _lastNameController.text = profileProvider.profile!.lastName;
+        }
+
+        return Container(
+          padding: const EdgeInsets.all(32.0),
+          color: AppColors.primary,
+          child: Flex(
+            direction: Axis.vertical,
+            children: [
+              UserAvatar(
+                name: profileProvider.profile != null
+                    ? "${profileProvider.profile!.firstName} ${profileProvider.profile!.lastName}"
+                    : "User",
               ),
-            ),
+              const SizedBox(height: 16),
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 300),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AuthTextField(
+                        controller: _emailController,
+                        hintText: 'Email',
+                        prefixIcon: Icons.email,
+                      ),
+                      const SizedBox(height: 16),
+                      AuthTextField(
+                        controller: _firstNameController,
+                        hintText: 'First name',
+                        prefixIcon: Icons.person,
+                      ),
+                      const SizedBox(height: 16),
+                      AuthTextField(
+                        controller: _lastNameController,
+                        hintText: 'Last name',
+                        prefixIcon: Icons.person,
+                      ),
+                      const SizedBox(height: 16),
+                      AuthButton(
+                        text: 'Edit',
+                        onPressed: () {
+                          // Implement edit profile logic
+                        },
+                        variant: ButtonVariant.primary,
+                      ),
+                      const SizedBox(height: 16),
+                      AuthButton(
+                        text: 'Logout',
+                        onPressed: () {
+                          context.read<AuthProvider>().logout();
+                        },
+                        variant: ButtonVariant.alternative,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 64),
+            ],
           ),
-          const SizedBox(height: 64),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -210,6 +227,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     context.read<ChildrenProvider>().fetchChildren();
+    context.read<ProfileProvider>().fetchProfile();
   }
 
   @override
