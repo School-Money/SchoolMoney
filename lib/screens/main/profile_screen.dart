@@ -7,11 +7,9 @@ import 'package:school_money/feature/collection/children_provider.dart';
 import 'package:school_money/feature/collection/model/child_create_payload.dart';
 import 'package:school_money/feature/collection/ui/add_child_dialog.dart';
 import 'package:school_money/feature/profile/ui/user_avatar.dart';
-
 import '../../auth/auth_provider.dart';
 import '../../components/auth/auth_button.dart';
 import '../../components/auth/auth_text_field.dart';
-import '../../components/auth/two_color_clickable_text.dart';
 import '../../components/student_card.dart';
 
 class ProfileScreen extends StatefulWidget {

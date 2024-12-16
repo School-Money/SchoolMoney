@@ -4,7 +4,6 @@ import 'package:school_money/components/auth/auth_text_field.dart';
 import 'package:school_money/components/auth/two_color_clickable_text.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/components/auth/auth_button.dart';
-import 'package:school_money/screens/main/main_screen.dart';
 
 import '../../auth/auth_provider.dart';
 

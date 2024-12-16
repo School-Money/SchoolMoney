@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:school_money/feature/chats/socket_service.dart';
+import 'package:school_money/feature/classes/model/user_details.dart';
 
 import 'model/auth_result.dart';
 
@@ -8,6 +10,7 @@ class AuthService {
   final Dio _dio = Dio();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   static const String _tokenKey = 'auth_token';
+  static const String _userDetailsKey = 'user_details';
   static final String _baseUrl = dotenv.env['BASE_URL'] ?? '';
 
   static final AuthService _instance = AuthService._internal();
@@ -24,6 +27,18 @@ class AuthService {
 
   Future<void> deleteToken() async {
     await _storage.delete(key: _tokenKey);
+  }
+
+  Future<UserDetails?> getUserDetails() async {
+    var userDetails = await _storage.read(key: _userDetailsKey);
+    var parsedUserDetails =
+        userDetails != null ? UserDetails.fromString(userDetails) : null;
+    return parsedUserDetails;
+  }
+
+  Future<void> saveUserDetails() async {
+    final userDetails = await fetchUserDetails();
+    await _storage.write(key: _userDetailsKey, value: userDetails.toString());
   }
 
   Future<AuthResult> login(String email, String password) async {
@@ -43,6 +58,13 @@ class AuthService {
 
       if (response.statusCode == 201 && response.data['accessToken'] != null) {
         await saveToken(response.data['accessToken']);
+        try {
+          SocketService.instance.initializeSocket(response.data['accessToken']);
+          await saveUserDetails();
+          await getUserDetails();
+        } catch (error) {
+          print(error);
+        }
         return AuthResult.success();
       }
 
@@ -107,7 +129,32 @@ class AuthService {
 
   Future<bool> isLoggedIn() async {
     final token = await getToken();
+    if (token != null) {
+      print('initializing socket');
+      SocketService.instance.initializeSocket(token);
+    }
     return token != null;
+  }
+
+  Future<UserDetails> fetchUserDetails() async {
+    try {
+      final response = await authenticatedDio.get(
+        '$_baseUrl/auth/user-details',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return UserDetails.fromJson(response.data);
+      }
+
+      throw Exception('Failed to fetch user details');
+    } catch (e) {
+      throw Exception('Failed to fetch user details: $e');
+    }
   }
 
   Dio get authenticatedDio {
