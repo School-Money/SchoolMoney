@@ -24,7 +24,8 @@ class ClassCard extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return ChatDialog(
-          classId: classDetails.id,
+          receiver: classDetails.id,
+          isClass: true,
         );
       },
     );

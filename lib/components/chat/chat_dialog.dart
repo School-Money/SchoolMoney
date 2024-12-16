@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:school_money/auth/auth_service.dart';
-import 'package:school_money/feature/chats/chat_manager.dart';
+import 'package:school_money/feature/chats/admin_chat_manager.dart';
+import 'package:school_money/feature/chats/base_chat_manager.dart';
+import 'package:school_money/feature/chats/class_chat_manager.dart';
+import 'package:school_money/feature/chats/private_chat_manager.dart';
 import 'package:school_money/feature/chats/socket_service.dart';
 
 class ChatDialog extends StatefulWidget {
-  final String classId;
+  final String? receiver;
+  final bool isClass;
 
   const ChatDialog({
     super.key,
-    required this.classId,
+    this.receiver,
+    this.isClass = false,
   });
 
   @override
@@ -19,10 +24,10 @@ class ChatDialog extends StatefulWidget {
 
 class _ChatDialogState extends State<ChatDialog> {
   List<types.Message> _messages = [];
-  late ChatManager _chatManager;
+  late BaseChatManager chatManager;
   String? _userId;
-  bool _isLoading = true;
   String? _error;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -43,27 +48,52 @@ class _ChatDialogState extends State<ChatDialog> {
       _isLoading = false;
     });
 
-    _chatManager = ChatManager(
-      classId: widget.classId,
-      socket: SocketService.instance.socket,
-      currentUserId: _userId!,
-      onMessagesUpdated: (messages) {
-        if (!mounted) return;
-        setState(() {
-          _messages = List.from(messages);
-        });
-      },
-    );
+    if (widget.receiver == null) {
+      chatManager = AdminChatManager(
+        socket: SocketService.instance.socket,
+        currentUserId: _userId!,
+        onMessagesUpdated: (messages) {
+          if (!mounted) return;
+          setState(() {
+            _messages = List.from(messages);
+          });
+        },
+      );
+    } else {
+      chatManager = widget.isClass
+          ? ClassChatManager(
+              receiverId: widget.receiver,
+              socket: SocketService.instance.socket,
+              currentUserId: _userId!,
+              onMessagesUpdated: (messages) {
+                if (!mounted) return;
+                setState(() {
+                  _messages = List.from(messages);
+                });
+              },
+            )
+          : PrivateChatManager(
+              receiverId: widget.receiver,
+              socket: SocketService.instance.socket,
+              currentUserId: _userId!,
+              onMessagesUpdated: (messages) {
+                if (!mounted) return;
+                setState(() {
+                  _messages = List.from(messages);
+                });
+              },
+            );
+    }
   }
 
   void _handleSendPressed(types.PartialText message) {
-    _chatManager.sendMessage(message.text);
+    chatManager.sendMessage(message.text);
   }
 
   @override
   void dispose() {
     if (_userId != null) {
-      _chatManager.dispose();
+      chatManager.dispose();
     }
     super.dispose();
   }
