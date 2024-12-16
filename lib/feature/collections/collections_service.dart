@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:school_money/feature/collections/model/create_collections_payload.dart';
 import '../../auth/auth_service.dart';
 import 'model/collection.dart';
 
@@ -34,4 +35,23 @@ class CollectionsService {
       throw Exception('Unexpected error: $e');
     }
   }
+
+  Future<Collection> createCollection(CreateCollectionPayload payload) async {
+  try {
+    final response = await _authService.authenticatedDio.post(
+      '$_baseUrl/collections',
+      data: payload.toJson(),
+    );
+    
+    return Collection.fromJson(response.data);
+  } on DioException catch (e) {
+    if (e.response != null) {
+      throw Exception('Error creating collection: ${e.response?.data['message'] ?? e.response?.statusCode}');
+    } else {
+      throw Exception('Server connection error: ${e.message}');
+    }
+  } catch (e) {
+    throw Exception('Unexpected error: $e');
+  }
+}
 }
