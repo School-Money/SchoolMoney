@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_money/feature/collection/children_service.dart';
-import 'package:school_money/feature/collection/model/child_create_payload.dart';
+import 'package:school_money/feature/children/children_service.dart';
+import 'package:school_money/feature/children/model/child_create_payload.dart';
 
 import 'model/child.dart';
 

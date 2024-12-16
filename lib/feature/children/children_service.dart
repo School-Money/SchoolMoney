@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:school_money/feature/collection/model/child_create_payload.dart';
+import 'package:school_money/feature/children/model/child_create_payload.dart';
 
 import '../../auth/auth_service.dart';
 import 'model/child.dart';
