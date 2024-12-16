@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../../auth/auth_service.dart';
+import 'model/profile.dart';
 
 class ProfileService {
   final AuthService _authService = AuthService();
@@ -11,13 +12,15 @@ class ProfileService {
   factory ProfileService() => _instance;
   ProfileService._internal();
 
-  Future<String> getMyChildren() async {
+  Future<Profile> getProfileInfo() async {
     try {
       final response = await _authService.authenticatedDio.get(
-        '$_baseUrl/children',
+        '$_baseUrl/auth/user-details',
       );
 
-      return response.data.toString();
+      print(response.data);
+
+      return Profile.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response != null) {
         throw Exception('Błąd pobierania danych: ${e.response?.statusCode}');
