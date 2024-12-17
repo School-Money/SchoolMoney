@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:school_money/admin/admin_service.dart';
 
-class AuthProvider extends ChangeNotifier {
+class AdminProvider extends ChangeNotifier {
   final AdminService _adminService = AdminService();
   bool _isLoggedIn = false;
 
