@@ -51,11 +51,13 @@ class ClassDetails {
 }
 
 class ClassMember {
+  final String id;
   final String firstName;
   final String lastName;
   final String? avatar;
 
   ClassMember({
+    required this.id,
     required this.firstName,
     required this.lastName,
     this.avatar,
@@ -63,6 +65,7 @@ class ClassMember {
 
   factory ClassMember.fromJson(Map<String, dynamic> json) {
     return ClassMember(
+      id: json['_id'] as String,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       avatar: json['avatar'] as String?,
@@ -70,6 +73,7 @@ class ClassMember {
   }
 
   Map<String, dynamic> toJson() => {
+        '_id': id,
         'firstName': firstName,
         'lastName': lastName,
         if (avatar != null) 'avatar': avatar,

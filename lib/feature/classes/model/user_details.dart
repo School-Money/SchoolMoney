@@ -5,20 +5,23 @@ class UserDetails {
   final String email;
   final String firstName;
   final String lastName;
+  final double balance;
 
   UserDetails({
     required this.id,
     required this.email,
     required this.firstName,
     required this.lastName,
+    required this.balance,
   });
 
   factory UserDetails.fromJson(Map<String, dynamic> json) {
     return UserDetails(
-      id: json['id'] as String,
+      id: json['_id'] as String,
       email: json['email'] as String,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
+      balance: json['balance'] as double,
     );
   }
 
@@ -29,16 +32,17 @@ class UserDetails {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      '_id': id,
       'email': email,
       'firstName': firstName,
       'lastName': lastName,
+      'balance': balance,
     };
   }
 
   @override
   String toString() {
-    return '{"id": "$id", "email": "$email", "firstName": "$firstName", "lastName": "$lastName"}';
+    return '{"_id": "$id", "email": "$email", "firstName": "$firstName", "lastName": "$lastName", "balance": $balance}';
   }
 
   // Optional: Add a method to get full name
