@@ -115,13 +115,9 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                             targetAmount: collection.targetAmount,
                             logo: collection.logo,
                             onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      CollectionsDetailsScreen(
-                                    collectionId: collection.id,
-                                  ),
-                                ),
+                              Navigator.of(context).pushNamed(
+                                '/collection-details',
+                                arguments: collection.id,
                               );
                             },
                           );
