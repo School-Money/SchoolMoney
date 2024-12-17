@@ -104,8 +104,6 @@ class MainTopBar extends StatelessWidget {
         const SizedBox(width: 16),
         _buildNavAction('Collections', '/collections'),
         const SizedBox(width: 16),
-        _buildNavAction('Expenses', '/expenses'),
-        const SizedBox(width: 16),
         _buildNavAction('Classes', '/classes'),
         const SizedBox(width: 16),
       ],

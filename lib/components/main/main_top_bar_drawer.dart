@@ -66,12 +66,6 @@ List<Widget> _buildUserTiles(
       isSelected: currentPage == '/collections',
     ),
     DrawerListTile(
-      title: 'Expenses',
-      route: '/expenses',
-      onPageSelected: onPageSelected,
-      isSelected: currentPage == '/expenses',
-    ),
-    DrawerListTile(
       title: 'Classes',
       route: '/classes',
       onPageSelected: onPageSelected,

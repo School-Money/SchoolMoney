@@ -9,6 +9,7 @@ class Payment {
   final double amount;
   final String description;
   final DateTime createdAt;
+  final bool withdrawable;
 
   Payment({
     required this.id,
@@ -18,6 +19,7 @@ class Payment {
     required this.amount,
     required this.description,
     required this.createdAt,
+    required this.withdrawable,
   });
 
   factory Payment.fromJson(Map<String, dynamic> json) {
@@ -29,6 +31,7 @@ class Payment {
       amount: (json['amount'] as num).toDouble(),
       description: json['description'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
+      withdrawable: json['withdrawable'] as bool,
     );
   }
 
@@ -41,6 +44,7 @@ class Payment {
       'amount': amount,
       'description': description,
       'createdAt': createdAt.toIso8601String(),
+      'withdrawable': withdrawable,
     };
   }
 }

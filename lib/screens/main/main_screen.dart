@@ -12,7 +12,6 @@ import '../../auth/auth_provider.dart';
 import '../../feature/classes/ui/class_details_screen.dart';
 import '../../feature/classes/ui/classes_screen.dart';
 import 'collections_screen.dart';
-import 'expenses_screen.dart';
 import 'home_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -64,9 +63,6 @@ class _MainScreenState extends State<MainScreen> {
             switch (settings.name) {
               case '/collections':
                 page = const CollectionsScreen();
-                break;
-              case '/expenses':
-                page = const ExpensesScreen();
                 break;
               case '/classes':
                 page = const ClassesScreen();

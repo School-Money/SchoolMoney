@@ -304,7 +304,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Payments (${collection.payments.length})',
+                      'Transactions (${collection.payments.length})',
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
