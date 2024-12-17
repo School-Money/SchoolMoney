@@ -13,6 +13,8 @@ import '../../auth/auth_provider.dart';
 import '../../components/auth/auth_button.dart';
 import '../../components/auth/auth_text_field.dart';
 import '../../components/student_card.dart';
+import '../../feature/collection/model/child_edit_payload.dart';
+import '../../feature/collection/ui/edit_child_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -143,9 +145,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         final childDetails =
                             await showDialog<ChildCreatePayload>(
                           context: context,
-                          builder: (context) => const AddChildDialog(),
+                          builder: (context) => const EditChildDialog(),
                         );
-
                         if (childDetails != null) {
                           log(childDetails.toJson().toString());
                           final result =
@@ -167,9 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text(
-                                    'Failed to add child',
-                                  ),
+                                  content: const Text('Failed to add child'),
                                   backgroundColor:
                                       AppColors.red.withOpacity(0.5),
                                 ),
@@ -217,11 +216,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       imageUrl: child.avatar,
                       firstName: child.firstName,
                       lastName: child.lastName,
-                      className:
-                          '', // TODO: Dodaj klasę do modelu Child jeśli potrzebna
-                      onTap: () {
-                        print(
-                            'Tapped on child: ${child.firstName} ${child.lastName}');
+                      className: '', // TODO: Add class to Child model if needed
+                      onTap: () async {
+                        final updatedChild =
+                            await showDialog<ChildEditPayload>(
+                          context: context,
+                          builder: (context) => EditChildDialog(
+                            existingChild: child,
+                          ),
+                        );
+
+                        if (updatedChild != null) {
+                          final result =
+                              await childrenProvider.updateChild(updatedChild);
+                          if (result) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content:
+                                      const Text('Child updated successfully'),
+                                  backgroundColor:
+                                      AppColors.green.withOpacity(0.5),
+                                ),
+                              );
+                            }
+                          } else {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Failed to update child'),
+                                  backgroundColor:
+                                      AppColors.red.withOpacity(0.5),
+                                ),
+                              );
+                            }
+                          }
+                        }
                       },
                     );
                   },

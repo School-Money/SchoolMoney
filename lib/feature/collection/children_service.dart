@@ -4,6 +4,7 @@ import 'package:school_money/feature/collection/model/child_create_payload.dart'
 
 import '../../auth/auth_service.dart';
 import 'model/child.dart';
+import 'model/child_edit_payload.dart';
 
 class ChildrenService {
   final AuthService _authService = AuthService();
@@ -42,6 +43,26 @@ class ChildrenService {
       );
 
       print("response.data: ${response.data}");
+      return Child.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception('Błąd tworzenia dziecka: ${e.response?.statusCode}');
+      } else {
+        throw Exception('Błąd połączenia z serwerem: ${e.message}');
+      }
+    } catch (e) {
+      print(e);
+      throw Exception('Wystąpił nieoczekiwany błąd: $e');
+    }
+  }
+
+  Future updateChild(ChildEditPayload childUpdate) async {
+    try {
+      final response = await _authService.authenticatedDio.patch(
+        '$_baseUrl/children',
+        data: childUpdate.toJson(),
+      );
+
       return Child.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response != null) {

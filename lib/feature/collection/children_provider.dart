@@ -3,6 +3,7 @@ import 'package:school_money/feature/collection/children_service.dart';
 import 'package:school_money/feature/collection/model/child_create_payload.dart';
 
 import 'model/child.dart';
+import 'model/child_edit_payload.dart';
 
 class ChildrenProvider extends ChangeNotifier {
   final ChildrenService _childrenService = ChildrenService();
@@ -37,6 +38,19 @@ class ChildrenProvider extends ChangeNotifier {
     } catch (e) {
       print(e);
       return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future updateChild(ChildEditPayload childUpdate) async {
+    try {
+      await _childrenService.updateChild(childUpdate);
+      _children = await _childrenService.getMyChildren();
+      fetchChildren();
+    } catch (e) {
+      // nothing
     } finally {
       _isLoading = false;
       notifyListeners();
