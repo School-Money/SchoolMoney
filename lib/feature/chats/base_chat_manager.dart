@@ -1,56 +1,48 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-class ChatManager {
-  final String classId;
-  final void Function(List<types.Message>) onMessagesUpdated;
+abstract class BaseChatManager {
+  final String? receiverId;
   final IO.Socket socket;
-  final String currentUserId; // Add this to identify the current user
+  final String currentUserId;
+  final void Function(List<types.Message>) onMessagesUpdated;
 
-  ChatManager({
-    required this.classId,
+  BaseChatManager({
+    this.receiverId,
     required this.onMessagesUpdated,
     required this.socket,
     required this.currentUserId,
   }) {
-    _setup();
+    setup();
   }
 
-  void _setup() {
-    socket.on('receiveMessage', (messages) {
-      final convertedMessages = _convertMessages(messages);
-      onMessagesUpdated(convertedMessages);
-    });
+  @protected
+  void setup();
 
-    _joinRoom();
-  }
+  @protected
+  void joinRoom();
 
-  void _joinRoom() {
-    socket.emit('joinRoomClass', {'classId': classId});
-  }
+  void sendMessage(String content);
 
-  void sendMessage(String content) {
-    try {
-      socket.emit('sendMessageClass', {
-        'classId': classId,
-        'content': content,
-      });
-    } catch (e) {
-      print('Error sending message: $e');
-    }
-  }
-
-  List<types.Message> _convertMessages(dynamic messages) {
+  @protected
+  List<types.Message> convertMessages(dynamic messages) {
     if (messages == null) return [];
 
     try {
       final List messagesList = messages is List ? messages : [messages];
 
       return messagesList.map((message) {
+        final senderName = message['senderName'] as String? ?? '';
+        final nameParts = senderName.split(' ');
+        final firstName = nameParts.isNotEmpty ? nameParts[0] : '';
+        final lastName = nameParts.length > 1 ? nameParts[1] : '';
+
         return types.TextMessage(
           author: types.User(
             id: message['sender'] ?? '',
-            firstName: 'User', // Add a default name or get from your backend
+            firstName: firstName,
+            lastName: lastName,
           ),
           id: message['_id'] ??
               DateTime.now().millisecondsSinceEpoch.toString(),

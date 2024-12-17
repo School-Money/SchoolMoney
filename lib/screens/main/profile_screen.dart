@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_money/components/chat/chat_dialog.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/collection/children_provider.dart';
 import 'package:school_money/feature/collection/model/child_create_payload.dart';
@@ -26,9 +27,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
 
+  void _showChatDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const ChatDialog();
+      },
+    );
+  }
+
   Widget _buildProfileSection() {
-    print(
-        'Building profile section, ${DateTime.parse('2017-12-12T23:00:00.000Z')}');
     return Container(
       padding: const EdgeInsets.all(32.0),
       color: AppColors.primary,
@@ -67,6 +75,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   AuthButton(
                     text: 'Edit',
                     onPressed: () {},
+                    variant: ButtonVariant.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  AuthButton(
+                    text: 'Contact Admin',
+                    onPressed: () => _showChatDialog(context),
                     variant: ButtonVariant.primary,
                   ),
                   const SizedBox(height: 16),
