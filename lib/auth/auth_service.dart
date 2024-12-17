@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:school_money/auth/model/auth_saved_state.dart';
+import 'package:school_money/feature/chats/socket_service.dart';
+import 'package:school_money/feature/classes/model/user_details.dart';
 
 import 'model/auth_result.dart';
 
@@ -8,22 +11,37 @@ class AuthService {
   final Dio _dio = Dio();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
   static const String _tokenKey = 'auth_token';
+  static const String _authSavedStateKey = 'auth_saved_state';
+  static const String _userDetailsKey = 'user_details';
   static final String _baseUrl = dotenv.env['BASE_URL'] ?? '';
 
   static final AuthService _instance = AuthService._internal();
   factory AuthService() => _instance;
   AuthService._internal();
 
-  Future<String?> getToken() async {
-    return await _storage.read(key: _tokenKey);
+  Future<AuthSavedState?> getAuthSavedState() async {
+    final json = await _storage.read(key: _authSavedStateKey);
+    return json != null ? AuthSavedState.fromJson(json) : null;
   }
 
-  Future<void> saveToken(String token) async {
-    await _storage.write(key: _tokenKey, value: token);
+  Future<void> saveAuthSavedState(AuthSavedState state) async {
+    await _storage.write(key: _authSavedStateKey, value: state.toString());
   }
 
   Future<void> deleteToken() async {
     await _storage.delete(key: _tokenKey);
+  }
+
+  Future<UserDetails?> getUserDetails() async {
+    var userDetails = await _storage.read(key: _userDetailsKey);
+    var parsedUserDetails =
+        userDetails != null ? UserDetails.fromString(userDetails) : null;
+    return parsedUserDetails;
+  }
+
+  Future<void> saveUserDetails() async {
+    final userDetails = await fetchUserDetails();
+    await _storage.write(key: _userDetailsKey, value: userDetails.toString());
   }
 
   Future<AuthResult> login(String email, String password) async {
@@ -42,7 +60,19 @@ class AuthService {
       );
 
       if (response.statusCode == 201 && response.data['accessToken'] != null) {
-        await saveToken(response.data['accessToken']);
+        await saveAuthSavedState(
+          AuthSavedState(
+            token: response.data['accessToken'],
+            isAdmin: response.data['isAdmin'],
+          ),
+        );
+        try {
+          SocketService.instance.initializeSocket(response.data['accessToken']);
+          await saveUserDetails();
+          await getUserDetails();
+        } catch (error) {
+          print(error);
+        }
         return AuthResult.success();
       }
 
@@ -106,8 +136,37 @@ class AuthService {
   }
 
   Future<bool> isLoggedIn() async {
-    final token = await getToken();
-    return token != null;
+    final authSavedState = await getAuthSavedState();
+    if (authSavedState != null) {
+      SocketService.instance.initializeSocket(authSavedState.token);
+    }
+    return authSavedState != null;
+  }
+
+  Future<bool> isAdmin() async {
+    final authSavedState = await getAuthSavedState();
+    return authSavedState?.isAdmin ?? false;
+  }
+
+  Future<UserDetails> fetchUserDetails() async {
+    try {
+      final response = await authenticatedDio.get(
+        '$_baseUrl/auth/user-details',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return UserDetails.fromJson(response.data);
+      }
+
+      throw Exception('Failed to fetch user details');
+    } catch (e) {
+      throw Exception('Failed to fetch user details: $e');
+    }
   }
 
   Dio get authenticatedDio {
@@ -115,7 +174,8 @@ class AuthService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await getToken();
+          final authSavedState = await getAuthSavedState();
+          final token = authSavedState?.token;
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }

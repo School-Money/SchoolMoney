@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:school_money/constants/app_colors.dart';
 
 class MainTopBar extends StatelessWidget {
+  final bool isAdmin;
   final String currentPage;
   final ValueChanged<String> onPageSelected;
 
   const MainTopBar({
     super.key,
+    required this.isAdmin,
     required this.currentPage,
     required this.onPageSelected,
   });
@@ -62,19 +64,7 @@ class MainTopBar extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildNavAction('Home', '/home'),
-                    const SizedBox(width: 16),
-                    _buildNavAction('Collections', '/collections'),
-                    const SizedBox(width: 16),
-                    _buildNavAction('Expenses', '/expenses'),
-                    const SizedBox(width: 16),
-                    _buildNavAction('Classes', '/classes'),
-                    const SizedBox(width: 16),
-                  ],
-                ),
+                isAdmin ? _buildAdminActions() : _buildUserActions(),
                 MouseRegion(
                   cursor: SystemMouseCursors.click,
                   child: GestureDetector(
@@ -103,6 +93,36 @@ class MainTopBar extends StatelessWidget {
           }
         },
       ),
+    );
+  }
+
+  Widget _buildUserActions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildNavAction('Home', '/home'),
+        const SizedBox(width: 16),
+        _buildNavAction('Collections', '/collections'),
+        const SizedBox(width: 16),
+        _buildNavAction('Expenses', '/expenses'),
+        const SizedBox(width: 16),
+        _buildNavAction('Classes', '/classes'),
+        const SizedBox(width: 16),
+      ],
+    );
+  }
+
+  Widget _buildAdminActions() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildNavAction('Parents', '/admin-parents'),
+        const SizedBox(width: 16),
+        _buildNavAction('Collections', '/admin-collections'),
+        const SizedBox(width: 16),
+        _buildNavAction('Report', '/admin-report'),
+        const SizedBox(width: 16),
+      ],
     );
   }
 

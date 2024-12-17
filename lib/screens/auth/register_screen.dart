@@ -4,7 +4,6 @@ import 'package:school_money/components/auth/auth_text_field.dart';
 import 'package:school_money/components/auth/two_color_clickable_text.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/components/auth/auth_button.dart';
-import 'package:school_money/screens/main/main_screen.dart';
 
 import '../../auth/auth_provider.dart';
 
@@ -22,6 +21,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _repeatPasswordController = TextEditingController();
   bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _passwordController.dispose();
+    _repeatPasswordController.dispose();
+    super.dispose();
+  }
 
   Future<void> _handleRegister() async {
     setState(() => _isLoading = true);

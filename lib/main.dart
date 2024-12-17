@@ -12,10 +12,9 @@ import 'auth/auth_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await dotenv.load(fileName: ".env");
   final authProvider = AuthProvider();
   await authProvider.checkAuthStatus();
-
-  await dotenv.load(fileName: ".env");
 
   runApp(
     MultiProvider(

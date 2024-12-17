@@ -2,16 +2,15 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_money/components/chat/chat_dialog.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/children/children_provider.dart';
 import 'package:school_money/feature/children/model/child_create_payload.dart';
 import 'package:school_money/feature/children/ui/add_child_dialog.dart';
 import 'package:school_money/feature/profile/ui/user_avatar.dart';
-
 import '../../auth/auth_provider.dart';
 import '../../components/auth/auth_button.dart';
 import '../../components/auth/auth_text_field.dart';
-import '../../components/auth/two_color_clickable_text.dart';
 import '../../components/student_card.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -28,9 +27,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    super.dispose();
+  }
+
+  void _showChatDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return const ChatDialog();
+      },
+    );
+  }
+
   Widget _buildProfileSection() {
-    print(
-        'Building profile section, ${DateTime.parse('2017-12-12T23:00:00.000Z')}');
     return Container(
       padding: const EdgeInsets.all(32.0),
       color: AppColors.primary,
@@ -69,6 +83,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   AuthButton(
                     text: 'Edit',
                     onPressed: () {},
+                    variant: ButtonVariant.primary,
+                  ),
+                  const SizedBox(height: 16),
+                  AuthButton(
+                    text: 'Contact Admin',
+                    onPressed: () => _showChatDialog(context),
                     variant: ButtonVariant.primary,
                   ),
                   const SizedBox(height: 16),
@@ -211,7 +231,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ChildrenProvider>().fetchChildren();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ChildrenProvider>().fetchChildren();
+    });
   }
 
   @override

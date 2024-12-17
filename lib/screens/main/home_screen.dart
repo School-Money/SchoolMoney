@@ -75,26 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadData();
   }
 
-  Future<void> _loadData() async {
-    await Future.delayed(const Duration(seconds: 2));
-
-    setState(() {
-      _students = students;
-      _isLoadingStudents = false;
-    });
-
-    await Future.delayed(const Duration(seconds: 1));
-    setState(() {
-      _schoolTrips = schoolTrips;
-      _isLoadingSchoolTrips = false;
-    });
-
-    await Future.delayed(const Duration(seconds: 1));
-    setState(() {
-      _parentTransactions = parentTransactions;
-      _isLoadingParentTransactions = false;
-    });
-  }
+  Future<void> _loadData() async {}
 
   @override
   Widget build(BuildContext context) {
