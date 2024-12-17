@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:school_money/components/chat/chat_dialog.dart';
+import 'package:school_money/feature/classes/model/user_details.dart';
+import '../../../auth/auth_service.dart';
 import '../../../components/student_card.dart';
 import '../../../constants/app_colors.dart';
 import '../classes_provider.dart';
@@ -21,6 +23,7 @@ class ClassDetailsScreen extends StatefulWidget {
 
 class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
   ClassDetails? _classDetails;
+  UserDetails? _userDetails;
   bool _isLoading = true;
   bool _isError = false;
 
@@ -28,6 +31,19 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
   void initState() {
     super.initState();
     _fetchClassDetails();
+    _getUserDetails();
+  }
+
+  void _showChatDialog(BuildContext context, String receiverId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ChatDialog(
+          receiver: receiverId,
+          isClass: false,
+        );
+      },
+    );
   }
 
   Future<void> _fetchClassDetails() async {
@@ -45,6 +61,10 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
         _isError = true;
       });
     }
+  }
+
+  Future<void> _getUserDetails() async {
+    _userDetails = await AuthService().getUserDetails();
   }
 
   @override
@@ -91,12 +111,14 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
                 const SizedBox(height: 16),
                 if (_classDetails?.treasurer != null)
                   StudentCard(
-                    imageUrl: _classDetails!.treasurer.avatar ?? '',
-                    firstName: _classDetails!.treasurer.firstName,
-                    lastName: _classDetails!.treasurer.lastName,
-                    className: _classDetails!.className,
-                    onTap: () {},
-                  ),
+                      imageUrl: _classDetails!.treasurer.avatar ?? '',
+                      firstName: _classDetails!.treasurer.firstName,
+                      lastName: _classDetails!.treasurer.lastName,
+                      className: _classDetails!.className,
+                      onTap: (_classDetails!.treasurer.id != _userDetails?.id)
+                          ? () => _showChatDialog(
+                              context, _classDetails!.treasurer.id)
+                          : null),
                 const SizedBox(height: 24),
                 Text(
                   'Parents',
@@ -122,8 +144,9 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
                             firstName: parent.firstName,
                             lastName: parent.lastName,
                             className: _classDetails!.className,
-                            onTap: () {},
-                          ),
+                            onTap: (parent.id != _userDetails?.id)
+                                ? () => _showChatDialog(context, parent.id)
+                                : null),
                       );
                     },
                   ),

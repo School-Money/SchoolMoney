@@ -130,7 +130,6 @@ class AuthService {
   Future<bool> isLoggedIn() async {
     final token = await getToken();
     if (token != null) {
-      print('initializing socket');
       SocketService.instance.initializeSocket(token);
     }
     return token != null;
