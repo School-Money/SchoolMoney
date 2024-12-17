@@ -6,8 +6,8 @@ import 'package:school_money/admin/model/bank_account.dart';
 import 'package:school_money/admin/model/collection.dart';
 import 'package:school_money/admin/model/parent.dart';
 import 'package:school_money/auth/auth_service.dart';
+import 'package:school_money/feature/children/model/child.dart';
 import 'package:school_money/feature/classes/model/class.dart';
-import 'package:school_money/feature/collection/model/child.dart';
 
 class AdminService {
   final AuthService _authService = AuthService();
