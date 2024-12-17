@@ -6,6 +6,7 @@ import 'package:school_money/feature/admin/admin-collections/admin_collections_s
 import 'package:school_money/feature/admin/admin-parents/admin_parents_screen.dart';
 import 'package:school_money/feature/admin/admin-profile/admin_profile_screen.dart';
 import 'package:school_money/feature/admin/admin-report/admin_report_screen.dart';
+import 'package:school_money/feature/collections/ui/collections_details_screen.dart';
 import 'package:school_money/screens/main/profile_screen.dart';
 
 import '../../auth/auth_provider.dart';
@@ -64,6 +65,10 @@ class _MainScreenState extends State<MainScreen> {
             switch (settings.name) {
               case '/collections':
                 page = const CollectionsScreen();
+                break;
+              case '/collection-details':
+                final String collectionId = settings.arguments as String;
+                page = CollectionsDetailsScreen(collectionId: collectionId);
                 break;
               case '/expenses':
                 page = const ExpensesScreen();

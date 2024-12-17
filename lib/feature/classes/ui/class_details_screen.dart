@@ -5,6 +5,7 @@ import 'package:school_money/feature/classes/model/user_details.dart';
 import '../../../auth/auth_service.dart';
 import '../../../components/student_card.dart';
 import '../../../constants/app_colors.dart';
+import '../../collections/ui/collections_details_screen.dart';
 import '../classes_provider.dart';
 import '../model/class_details.dart';
 import 'collection_card.dart';
@@ -182,7 +183,12 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
                                 .inDays,
                             currentAmount: collection.currentAmount,
                             targetAmount: collection.targetAmount,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                '/collection-details',
+                                arguments: collection.id,
+                              );
+                            },
                           ),
                         ),
                       );
