@@ -27,6 +27,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    super.dispose();
+  }
+
   void _showChatDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -223,7 +231,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ChildrenProvider>().fetchChildren();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ChildrenProvider>().fetchChildren();
+    });
   }
 
   @override

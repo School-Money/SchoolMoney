@@ -119,7 +119,9 @@ class ClassesScreenState extends State<ClassesScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ClassesProvider>().getMyClasses();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ClassesProvider>().getMyClasses();
+    });
   }
 
   @override

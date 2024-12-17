@@ -22,6 +22,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _repeatPasswordController = TextEditingController();
   bool _isLoading = false;
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _passwordController.dispose();
+    _repeatPasswordController.dispose();
+    super.dispose();
+  }
+
   Future<void> _handleRegister() async {
     setState(() => _isLoading = true);
 

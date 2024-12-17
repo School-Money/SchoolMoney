@@ -6,12 +6,14 @@ import 'model/auth_result.dart';
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
   bool _isLoggedIn = false;
+  bool _isAdmin = false;
 
   bool get isLoggedIn => _isLoggedIn;
+  bool get isAdmin => _isAdmin;
 
   Future<void> checkAuthStatus() async {
-    print('Checking auth status...');
     _isLoggedIn = await _authService.isLoggedIn();
+    _isAdmin = await _authService.isAdmin();
     notifyListeners();
   }
 
@@ -22,6 +24,7 @@ class AuthProvider extends ChangeNotifier {
     final result = await _authService.login(email, password);
     if (result.success) {
       _isLoggedIn = true;
+      _isAdmin = await _authService.isAdmin();
       notifyListeners();
     }
     return result;
@@ -47,6 +50,7 @@ class AuthProvider extends ChangeNotifier {
   Future<void> logout() async {
     await _authService.logout();
     _isLoggedIn = false;
+    _isAdmin = false;
     notifyListeners();
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:school_money/constants/app_colors.dart';
+
+import '../../auth/auth_provider.dart';
 
 class MainTopBarDrawer extends StatelessWidget {
   const MainTopBarDrawer({
@@ -29,30 +32,10 @@ class MainTopBarDrawer extends StatelessWidget {
               ),
             ),
           ),
-          DrawerListTile(
-            title: 'Home',
-            route: '/home',
-            onPageSelected: onPageSelected,
-            isSelected: currentPage == '/home',
-          ),
-          DrawerListTile(
-            title: 'Collections',
-            route: '/collections',
-            onPageSelected: onPageSelected,
-            isSelected: currentPage == '/collections',
-          ),
-          DrawerListTile(
-            title: 'Expenses',
-            route: '/expenses',
-            onPageSelected: onPageSelected,
-            isSelected: currentPage == '/expenses',
-          ),
-          DrawerListTile(
-            title: 'Classes',
-            route: '/classes',
-            onPageSelected: onPageSelected,
-            isSelected: currentPage == '/classes',
-          ),
+          if (context.read<AuthProvider>().isAdmin)
+            ..._buildAdminTiles(currentPage, onPageSelected)
+          else
+            ..._buildUserTiles(currentPage, onPageSelected),
           DrawerListTile(
             title: 'Profile',
             route: '/profile',
@@ -63,6 +46,64 @@ class MainTopBarDrawer extends StatelessWidget {
       ),
     );
   }
+}
+
+List<Widget> _buildUserTiles(
+  String currentPage,
+  Function onPageSelected,
+) {
+  return [
+    DrawerListTile(
+      title: 'Home',
+      route: '/home',
+      onPageSelected: onPageSelected,
+      isSelected: currentPage == '/home',
+    ),
+    DrawerListTile(
+      title: 'Collections',
+      route: '/collections',
+      onPageSelected: onPageSelected,
+      isSelected: currentPage == '/collections',
+    ),
+    DrawerListTile(
+      title: 'Expenses',
+      route: '/expenses',
+      onPageSelected: onPageSelected,
+      isSelected: currentPage == '/expenses',
+    ),
+    DrawerListTile(
+      title: 'Classes',
+      route: '/classes',
+      onPageSelected: onPageSelected,
+      isSelected: currentPage == '/classes',
+    ),
+  ];
+}
+
+List<Widget> _buildAdminTiles(
+  String currentPage,
+  Function onPageSelected,
+) {
+  return [
+    DrawerListTile(
+      title: 'Parents',
+      route: '/admin-parents',
+      onPageSelected: onPageSelected,
+      isSelected: currentPage == '/admin-parents',
+    ),
+    DrawerListTile(
+      title: 'Collections',
+      route: '/admin-collections',
+      onPageSelected: onPageSelected,
+      isSelected: currentPage == '/admin-collections',
+    ),
+    DrawerListTile(
+      title: 'Report',
+      route: '/admin-report',
+      onPageSelected: onPageSelected,
+      isSelected: currentPage == '/admin-report',
+    ),
+  ];
 }
 
 class DrawerListTile extends StatelessWidget {
