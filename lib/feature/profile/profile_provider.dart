@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_money/feature/profile/profile_service.dart';
 import 'model/profile.dart';
@@ -24,6 +26,20 @@ class ProfileProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> updateProfilePhoto(dynamic imageInput) async {
+    try {
+      // Single method for both web and mobile
+      await _profileService.uploadProfilePhoto(imageInput);
+
+      // Refresh the avatar after upload
+      _avatar = await _profileService.getProfileImage();
+      notifyListeners();
+    } catch (e) {
+      print('Failed to upload profile photo: $e');
+      rethrow;
     }
   }
 }
