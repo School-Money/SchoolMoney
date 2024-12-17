@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:school_money/feature/collections/model/collectionDetails/collection_details.dart';
 import 'package:school_money/feature/collections/model/create_collections_payload.dart';
 import '../../auth/auth_service.dart';
 import 'model/collection.dart';
@@ -28,6 +29,24 @@ class CollectionsService {
     } on DioException catch (e) {
       if (e.response != null) {
         throw Exception('Error fetching collections: ${e.response?.statusCode}');
+      } else {
+        throw Exception('Server connection error: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  Future<CollectionDetails> getCollectionDetails(String collectionId) async {
+    try {
+      final response = await _authService.authenticatedDio.get(
+        '$_baseUrl/collections/$collectionId',
+      );
+      
+      return CollectionDetails.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception('Error fetching collection details: ${e.response?.statusCode}');
       } else {
         throw Exception('Server connection error: ${e.message}');
       }

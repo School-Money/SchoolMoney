@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/components/main/search_text_field.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/collections/collections_provider.dart';
 import 'package:school_money/feature/collections/ui/collections_card.dart';
-import 'package:school_money/feature/collections/ui/create_collection_dialog.dart';
+import 'package:school_money/feature/collections/ui/collections_details_screen.dart';
 
 class CollectionsScreen extends StatefulWidget {
   const CollectionsScreen({super.key});
@@ -20,18 +19,17 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch collections when the screen initializes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CollectionsProvider>().getCollections();
     });
   }
 
-  void _showCreateCollectionDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => const CreateCollectionDialog(),
-    );
-  }
+  // void _showCreateCollectionDialog() {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => const CreateCollectionDialog(),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +38,6 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
         padding: const EdgeInsets.only(left: 8, right: 8, top: 48),
         child: Column(
           children: [
-            // Search TextField
             SizedBox(
               width: 400,
               child: SearchTextField(
@@ -54,11 +51,9 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
             ),
             const SizedBox(height: 32),
 
-            // Collections Grid
             Expanded(
               child: Consumer<CollectionsProvider>(
                 builder: (context, provider, child) {
-                  // Loading state
                   if (provider.isLoading) {
                     return Center(
                       child: CircularProgressIndicator(
@@ -67,18 +62,16 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                     );
                   }
 
-                  // Filter collections
                   final filteredCollections = provider.collections
                       .where((collection) =>
                           collection.title
                               .toLowerCase()
                               .contains(_searchQuery) ||
-                          collection.classId
+                          collection.collectionClass.name
                               .toLowerCase()
                               .contains(_searchQuery))
                       .toList();
 
-                  // No collections found
                   if (filteredCollections.isEmpty) {
                     return Center(
                       child: Text(
@@ -92,7 +85,6 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                     );
                   }
 
-                  // Responsive grid layout
                   return LayoutBuilder(
                     builder: (context, constraints) {
                       int crossAxisCount =
@@ -114,7 +106,7 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
 
                           return CollectionCard(
                             title: collection.title,
-                            className: collection.classId,
+                            className: collection.collectionClass.name,
                             description: collection.description,
                             daysLeft: daysLeft,
                             startDate: collection.startDate,
@@ -123,7 +115,14 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                             targetAmount: collection.targetAmount,
                             logo: collection.logo,
                             onTap: () {
-                              // TODO: Implement collection details navigation
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      CollectionsDetailsScreen(
+                                    collectionId: collection.id,
+                                  ),
+                                ),
+                              );
                             },
                           );
                         },
