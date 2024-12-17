@@ -10,7 +10,6 @@ import 'model/auth_result.dart';
 class AuthService {
   final Dio _dio = Dio();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  static const String _tokenKey = 'auth_token';
   static const String _authSavedStateKey = 'auth_saved_state';
   static const String _userDetailsKey = 'user_details';
   static final String _baseUrl = dotenv.env['BASE_URL'] ?? '';
@@ -28,8 +27,8 @@ class AuthService {
     await _storage.write(key: _authSavedStateKey, value: state.toString());
   }
 
-  Future<void> deleteToken() async {
-    await _storage.delete(key: _tokenKey);
+  Future<void> deleteAuthSavedState() async {
+    await _storage.delete(key: _authSavedStateKey);
   }
 
   Future<UserDetails?> getUserDetails() async {
@@ -42,6 +41,10 @@ class AuthService {
   Future<void> saveUserDetails() async {
     final userDetails = await fetchUserDetails();
     await _storage.write(key: _userDetailsKey, value: userDetails.toString());
+  }
+
+  Future<void> deleteUserDetails() async {
+    await _storage.delete(key: _userDetailsKey);
   }
 
   Future<AuthResult> login(String email, String password) async {
@@ -132,7 +135,8 @@ class AuthService {
   }
 
   Future<void> logout() async {
-    await deleteToken();
+    await deleteAuthSavedState();
+    await deleteUserDetails();
   }
 
   Future<bool> isLoggedIn() async {
