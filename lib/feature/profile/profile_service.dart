@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 import 'dart:typed_data';
 
 import '../../auth/auth_service.dart';
@@ -46,6 +50,45 @@ class ProfileService {
       }
     } catch (e) {
       throw Exception('Wystąpił nieoczekiwany błąd: $e');
+    }
+  }
+
+  Future<void> uploadProfilePhoto(dynamic imageInput) async {
+    try {
+      MultipartFile multipartFile;
+
+      if (imageInput is File) {
+        String? mimeType = lookupMimeType(imageInput.path);
+        multipartFile = await MultipartFile.fromFile(
+          imageInput.path,
+          contentType: MediaType.parse(mimeType ?? 'image/jpeg'),
+        );
+      } else if (imageInput is Uint8List) {
+        multipartFile = MultipartFile.fromBytes(
+          imageInput,
+          filename: 'profile_photo.png',
+          contentType: MediaType('image', 'png'),
+        );
+      } else {
+        throw ArgumentError('Unsupported image input type');
+      }
+
+      final formData = FormData.fromMap({
+        'file': multipartFile,
+      });
+
+      await _authService.authenticatedDio.patch(
+        '$_baseUrl/parents/avatar',
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+      );
+    } catch (e) {
+      print('Photo upload failed: $e');
+      rethrow;
     }
   }
 }

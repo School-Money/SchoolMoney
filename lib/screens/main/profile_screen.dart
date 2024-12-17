@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:school_money/components/profile/edit_avatar_dialog.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/collection/children_provider.dart';
 import 'package:school_money/feature/collection/model/child_create_payload.dart';
@@ -33,9 +34,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (profileProvider.isLoading) {
           return const Center(child: CircularProgressIndicator());
         }
-        print('Is Loading: ${profileProvider.isLoading}');
-        print('Profile: ${profileProvider.profile}');
-        print('Avatar: ${profileProvider.avatar}');
 
         if (profileProvider.profile != null) {
           _emailController.text = profileProvider.profile!.email;
@@ -67,24 +65,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         controller: _emailController,
                         hintText: 'Email',
                         prefixIcon: Icons.email,
+                        enabled: false,
                       ),
                       const SizedBox(height: 16),
                       AuthTextField(
                         controller: _firstNameController,
                         hintText: 'First name',
                         prefixIcon: Icons.person,
+                        enabled: false,
                       ),
                       const SizedBox(height: 16),
                       AuthTextField(
                         controller: _lastNameController,
                         hintText: 'Last name',
                         prefixIcon: Icons.person,
+                        enabled: false,
                       ),
                       const SizedBox(height: 16),
                       AuthButton(
                         text: 'Edit',
                         onPressed: () {
-                          // Implement edit profile logic
+                          showDialog(
+                            context: context,
+                            builder: (context) => EditProfilePhotoDialog(
+                              currentAvatar: profileProvider.avatar,
+                            ),
+                          );
                         },
                         variant: ButtonVariant.primary,
                       ),
