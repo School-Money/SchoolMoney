@@ -99,6 +99,37 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
                   ),
                 const SizedBox(height: 24),
                 Text(
+                  'Parents',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.secondary,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  height: 200,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _classDetails?.parents.length ?? 0,
+                    itemBuilder: (context, index) {
+                      final parent = _classDetails!.parents[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: StudentCard(
+                            imageUrl: parent.avatar ?? '',
+                            firstName: parent.firstName,
+                            lastName: parent.lastName,
+                            className: _classDetails!.className,
+                            onTap: () {},
+                          ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
                   'Active collections',
                   style: TextStyle(
                     fontSize: 20,

@@ -1,15 +1,17 @@
 class Parent {
+  final String id;
   final String firstName;
   final String lastName;
   final String password;
   final String email;
-  final String avatar;
+  final String? avatar;
   final String bankAccount;
   final bool isBlocked;
   final DateTime createdAt;
-  final bool isTreasurer;
+  final bool? isTreasurer;
 
   Parent({
+    required this.id,
     required this.firstName,
     required this.lastName,
     required this.password,
@@ -24,21 +26,23 @@ class Parent {
   // Factory method to create an instance of Parent from JSON
   factory Parent.fromJson(Map<String, dynamic> json) {
     return Parent(
+      id: json['_id'] as String,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       password: json['password'] as String,
       email: json['email'] as String,
-      avatar: json['avatar'] as String,
+      avatar: json['avatar'] as String?,
       bankAccount: json['bankAccount'] as String,
       isBlocked: json['isBlocked'] as bool,
       createdAt: DateTime.parse(json['createdAt'] as String),
-      isTreasurer: json['isTreasurer'] as bool,
+      isTreasurer: (json['isTreasurer'] ?? false) as bool,
     );
   }
 
   // Convert Parent instance to JSON
   Map<String, dynamic> toJson() {
     return {
+      '_id': id,
       'firstName': firstName,
       'lastName': lastName,
       'password': password,
@@ -54,6 +58,6 @@ class Parent {
   // toString method for easy debugging
   @override
   String toString() {
-    return 'Parent(firstName: $firstName, lastName: $lastName, email: $email, avatar: $avatar, bankAccount: $bankAccount, isBlocked: $isBlocked, createdAt: $createdAt, isTreasurer: $isTreasurer)';
+    return 'Parent(id: $id, firstName: $firstName, lastName: $lastName, email: $email, avatar: $avatar, bankAccount: $bankAccount, isBlocked: $isBlocked, createdAt: $createdAt, isTreasurer: $isTreasurer)';
   }
 }

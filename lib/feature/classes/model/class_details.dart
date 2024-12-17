@@ -1,3 +1,5 @@
+import 'package:school_money/admin/model/parent.dart';
+
 class ClassDetails {
   final String id;
   final String className;
@@ -5,6 +7,7 @@ class ClassDetails {
   final ClassMember treasurer;
   final List<Collection> collections;
   final bool isTreasurer;
+  final List<Parent> parents;
 
   ClassDetails({
     required this.id,
@@ -13,6 +16,7 @@ class ClassDetails {
     required this.treasurer,
     required this.collections,
     required this.isTreasurer,
+    required this.parents,
   });
 
   factory ClassDetails.fromJson(Map<String, dynamic> json) {
@@ -29,6 +33,9 @@ class ClassDetails {
               Collection.fromJson(collection as Map<String, dynamic>))
           .toList(),
       isTreasurer: json['isTreasurer'] as bool,
+      parents: (json['parents'] as List<dynamic>)
+          .map((parent) => Parent.fromJson(parent as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -39,6 +46,7 @@ class ClassDetails {
         'collections':
             collections.map((collection) => collection.toJson()).toList(),
         'isTreasurer': isTreasurer,
+        'parents': parents.map((parent) => parent.toJson()).toList(),
       };
 }
 
