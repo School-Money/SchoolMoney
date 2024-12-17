@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_money/feature/classes/classes_service.dart';
+import 'package:school_money/feature/classes/model/class_details.dart';
 
 import 'model/class.dart';
 
@@ -29,6 +30,15 @@ class ClassesProvider extends ChangeNotifier {
   Future<String?> getInviteCode(String classId) async {
     try {
       return await _classesService.getInviteCode(classId);
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<ClassDetails?> getClassDetails(String classId) async {
+    try {
+      return await _classesService.getClassDetails(classId);
     } catch (e) {
       print(e);
       return null;

@@ -200,7 +200,7 @@ class ClassesScreenState extends State<ClassesScreen> {
                             classDetails: classItem,
                             onShowDetailsClicked: () {
                               Navigator.of(context).pushNamed(
-                                '/class',
+                                '/class-details',
                                 arguments: classItem.id,
                               );
                             },

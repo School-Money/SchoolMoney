@@ -1,10 +1,10 @@
-
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:school_money/feature/classes/model/class_details_payload.dart';
 
 import '../../auth/auth_service.dart';
 import 'model/class.dart';
+import 'model/class_details.dart';
 import 'model/pass_treasurer_payload.dart';
 
 class ClassesService {
@@ -90,6 +90,31 @@ class ClassesService {
       if (e.response != null) {
         throw Exception(
             'Błąd przekazywania roli skarbnika: ${e.response?.statusCode}');
+      } else {
+        throw Exception('Błąd połączenia z serwerem: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Wystąpił nieoczekiwany błąd: $e');
+    }
+  }
+
+  Future<ClassDetails> getClassDetails(String classId) async {
+    try {
+      final response = await _authService.authenticatedDio.post(
+        '$_baseUrl/classes/details',
+        data: {'classId': classId},
+      );
+
+      if (response.data == null) {
+        throw Exception('Brak danych o klasie');
+      }
+
+      print(response.data);
+
+      return ClassDetails.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception('Błąd pobierania szczegółów klasy: ${e.response}');
       } else {
         throw Exception('Błąd połączenia z serwerem: ${e.message}');
       }

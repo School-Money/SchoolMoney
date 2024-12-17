@@ -175,7 +175,7 @@ class ClassCard extends StatelessWidget {
                         width: 120,
                         child: AuthButton(
                           text: 'Show Details',
-                          onPressed: () {},
+                          onPressed: onShowDetailsClicked,
                           variant: ButtonVariant.alternative,
                           customTextStyle: TextStyle(
                             color: AppColors.secondary,
@@ -191,7 +191,7 @@ class ClassCard extends StatelessWidget {
                           width: 120,
                           child: AuthButton(
                             text: 'Edit class',
-                            onPressed: () {},
+                            onPressed: onEditClassClicked,
                             variant: ButtonVariant.alternative,
                             customTextStyle: TextStyle(
                               color: AppColors.secondary,
