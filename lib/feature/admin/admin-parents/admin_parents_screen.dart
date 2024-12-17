@@ -48,25 +48,38 @@ class _AdminParentsScreenState extends State<AdminParentsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _parents.isEmpty
-              ? Center(child: Text('No parents found'))
-              : GridView.builder(
-                  padding: EdgeInsets.all(8.0),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                    childAspectRatio: 1.9, // Adjust this to control card height
-                  ),
-                  itemCount: _parents.length,
-                  itemBuilder: (context, index) {
-                    final parent = _parents[index];
-                    return _ParentCard(parent: parent);
-                  },
-                ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return _isLoading
+              ? Center(child: CircularProgressIndicator())
+              : _parents.isEmpty
+                  ? Center(child: Text('No parents found'))
+                  : GridView.builder(
+                      padding: EdgeInsets.all(8.0),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                            _calculateCrossAxisCount(constraints.maxWidth),
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                        childAspectRatio:
+                            1.5, // Adjust this to control card height
+                      ),
+                      itemCount: _parents.length,
+                      itemBuilder: (context, index) {
+                        final parent = _parents[index];
+                        return _ParentCard(parent: parent);
+                      },
+                    );
+        },
+      ),
     );
+  }
+
+  int _calculateCrossAxisCount(double width) {
+    if (width < 700) return 1;
+    if (width < 1100) return 2;
+    if (width < 1500) return 3;
+    return 4;
   }
 }
 
