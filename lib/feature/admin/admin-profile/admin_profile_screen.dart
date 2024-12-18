@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:school_money/constants/app_colors.dart';
+import 'package:school_money/components/auth/auth_button.dart';
 
 import '../../../auth/auth_provider.dart';
 
@@ -17,14 +17,15 @@ class _AdminProfileScreenState extends State<AdminProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: TextButton(
-        child: Text(
-          'Logout',
-          style: TextStyle(color: AppColors.red),
+      child: SizedBox(
+        width: 300,
+        child: AuthButton(
+          text: 'Logout',
+          onPressed: () {
+            context.read<AuthProvider>().logout();
+          },
+          variant: ButtonVariant.alternative,
         ),
-        onPressed: () {
-          context.read<AuthProvider>().logout();
-        },
       ),
     );
   }
