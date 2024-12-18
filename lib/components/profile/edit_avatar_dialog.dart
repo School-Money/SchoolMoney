@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/profile/profile_provider.dart';
 
@@ -107,9 +108,9 @@ class _EditProfilePhotoDialogState extends State<EditProfilePhotoDialog> {
             children: [
               ElevatedButton.icon(
                 onPressed: () => _pickImage(ImageSource.gallery),
-                icon: Icon(Icons.photo, color: AppColors.primary),
-                label:
-                    Text('Gallery', style: TextStyle(color: AppColors.primary)),
+                icon: Icon(Icons.edit, color: AppColors.primary),
+                label: Text('Change Avatar',
+                    style: TextStyle(color: AppColors.primary)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.secondary,
                 ),
@@ -119,17 +120,23 @@ class _EditProfilePhotoDialogState extends State<EditProfilePhotoDialog> {
         ],
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text('Cancel', style: TextStyle(color: AppColors.secondary)),
-        ),
-        ElevatedButton(
-          onPressed: _saveProfilePhoto,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.secondary,
+        Row(children: [
+          Expanded(
+            child: AuthButton(
+              text: 'Cancel',
+              onPressed: () => Navigator.of(context).pop(),
+              variant: ButtonVariant.alternative,
+            ),
           ),
-          child: Text('Save', style: TextStyle(color: AppColors.primary)),
-        ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: AuthButton(
+              text: 'Save',
+              onPressed: _saveProfilePhoto,
+              variant: ButtonVariant.primary,
+            ),
+          )
+        ])
       ],
     );
   }

@@ -8,6 +8,7 @@ import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/children/children_provider.dart';
 import 'package:school_money/feature/children/model/child_create_payload.dart';
 import 'package:school_money/feature/children/model/child_edit_payload.dart';
+import 'package:school_money/feature/children/ui/add_child_dialog.dart';
 import 'package:school_money/feature/children/ui/edit_child_dialog.dart';
 import 'package:school_money/feature/profile/profile_provider.dart';
 import 'package:school_money/feature/profile/ui/user_avatar.dart';
@@ -115,6 +116,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 16),
                       AuthButton(
+                        text: 'Contact Admin',
+                        onPressed: () => _showChatDialog(context),
+                        variant: ButtonVariant.primary,
+                      ),
+                      const SizedBox(height: 16),
+                      AuthButton(
                         text: 'Logout',
                         onPressed: () {
                           context.read<AuthProvider>().logout();
@@ -162,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         final childDetails =
                             await showDialog<ChildCreatePayload>(
                           context: context,
-                          builder: (context) => const EditChildDialog(),
+                          builder: (context) => const AddChildDialog(),
                         );
                         if (childDetails != null) {
                           log(childDetails.toJson().toString());
