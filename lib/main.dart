@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:school_money/admin/admin_provider.dart';
 import 'package:school_money/components/auth/auth_wrapper.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,7 @@ void main() async {
         ChangeNotifierProvider.value(value: ChildrenProvider()),
         ChangeNotifierProvider.value(value: ClassesProvider()),
         ChangeNotifierProvider.value(value: CollectionsProvider()),
+        ChangeNotifierProvider.value(value: AdminProvider()),
       ],
       child: const App(),
     ),

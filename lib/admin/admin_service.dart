@@ -39,7 +39,7 @@ class AdminService {
 
   Future<void> switchBlockOnParent(String parentId) async {
     try {
-      _authService.authenticatedDio.put(
+      _authService.authenticatedDio.patch(
         '$_baseUrl/admin/parents/block/$parentId',
       );
     } on DioException catch (e) {
