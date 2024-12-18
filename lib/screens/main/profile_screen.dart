@@ -3,10 +3,14 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:school_money/components/chat/chat_dialog.dart';
+import 'package:school_money/components/profile/edit_avatar_dialog.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/children/children_provider.dart';
 import 'package:school_money/feature/children/model/child_create_payload.dart';
+import 'package:school_money/feature/children/model/child_edit_payload.dart';
 import 'package:school_money/feature/children/ui/add_child_dialog.dart';
+import 'package:school_money/feature/children/ui/edit_child_dialog.dart';
+import 'package:school_money/feature/profile/profile_provider.dart';
 import 'package:school_money/feature/profile/ui/user_avatar.dart';
 import '../../auth/auth_provider.dart';
 import '../../components/auth/auth_button.dart';
@@ -45,67 +49,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileSection() {
-    return Container(
-      padding: const EdgeInsets.all(32.0),
-      color: AppColors.primary,
-      child: Flex(
-        direction: Axis.vertical,
-        children: [
-          const UserAvatar(
-            name: "John Doe",
-          ),
-          const SizedBox(height: 16),
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 300),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AuthTextField(
-                    controller: _emailController,
-                    hintText: 'Email',
-                    prefixIcon: Icons.email,
-                  ),
-                  const SizedBox(height: 16),
-                  AuthTextField(
-                    controller: _firstNameController,
-                    hintText: 'First name',
-                    prefixIcon: Icons.person,
-                  ),
-                  const SizedBox(height: 16),
-                  AuthTextField(
-                    controller: _lastNameController,
-                    hintText: 'Last name',
-                    prefixIcon: Icons.person,
-                  ),
-                  const SizedBox(height: 16),
-                  AuthButton(
-                    text: 'Edit',
-                    onPressed: () {},
-                    variant: ButtonVariant.primary,
-                  ),
-                  const SizedBox(height: 16),
-                  AuthButton(
-                    text: 'Contact Admin',
-                    onPressed: () => _showChatDialog(context),
-                    variant: ButtonVariant.primary,
-                  ),
-                  const SizedBox(height: 16),
-                  AuthButton(
-                    text: 'Logout',
-                    onPressed: () {
-                      context.read<AuthProvider>().logout();
-                    },
-                    variant: ButtonVariant.alternative,
-                  ),
-                ],
+    return Consumer<ProfileProvider>(
+      builder: (context, profileProvider, child) {
+        if (profileProvider.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (profileProvider.profile != null) {
+          _emailController.text = profileProvider.profile!.email;
+          _firstNameController.text = profileProvider.profile!.firstName;
+          _lastNameController.text = profileProvider.profile!.lastName;
+        }
+
+        return Container(
+          padding: const EdgeInsets.all(32.0),
+          color: AppColors.primary,
+          child: Flex(
+            direction: Axis.vertical,
+            children: [
+              UserAvatar(
+                avatar: profileProvider.avatar,
+                name: profileProvider.profile != null
+                    ? "${profileProvider.profile!.firstName} ${profileProvider.profile!.lastName}"
+                    : "User",
               ),
-            ),
+              const SizedBox(height: 16),
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 300),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AuthTextField(
+                        controller: _emailController,
+                        hintText: 'Email',
+                        prefixIcon: Icons.email,
+                        enabled: false,
+                      ),
+                      const SizedBox(height: 16),
+                      AuthTextField(
+                        controller: _firstNameController,
+                        hintText: 'First name',
+                        prefixIcon: Icons.person,
+                        enabled: false,
+                      ),
+                      const SizedBox(height: 16),
+                      AuthTextField(
+                        controller: _lastNameController,
+                        hintText: 'Last name',
+                        prefixIcon: Icons.person,
+                        enabled: false,
+                      ),
+                      const SizedBox(height: 16),
+                      AuthButton(
+                        text: 'Edit',
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => EditProfilePhotoDialog(
+                              currentAvatar: profileProvider.avatar,
+                            ),
+                          );
+                        },
+                        variant: ButtonVariant.primary,
+                      ),
+                      const SizedBox(height: 16),
+                      AuthButton(
+                        text: 'Contact Admin',
+                        onPressed: () => _showChatDialog(context),
+                        variant: ButtonVariant.primary,
+                      ),
+                      const SizedBox(height: 16),
+                      AuthButton(
+                        text: 'Logout',
+                        onPressed: () {
+                          context.read<AuthProvider>().logout();
+                        },
+                        variant: ButtonVariant.alternative,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 64),
+            ],
           ),
-          const SizedBox(height: 64),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -140,7 +171,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           context: context,
                           builder: (context) => const AddChildDialog(),
                         );
-
                         if (childDetails != null) {
                           log(childDetails.toJson().toString());
                           final result =
@@ -162,9 +192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text(
-                                    'Failed to add child',
-                                  ),
+                                  content: const Text('Failed to add child'),
                                   backgroundColor:
                                       AppColors.red.withOpacity(0.5),
                                 ),
@@ -212,11 +240,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       imageUrl: child.avatar,
                       firstName: child.firstName,
                       lastName: child.lastName,
-                      className:
-                          '', // TODO: Dodaj klasę do modelu Child jeśli potrzebna
-                      onTap: () {
-                        print(
-                            'Tapped on child: ${child.firstName} ${child.lastName}');
+                      className: '',
+                      onTap: () async {
+                        final result = await showDialog(
+                          context: context,
+                          builder: (context) => EditChildDialog(
+                            existingChild: child,
+                          ),
+                        );
+
+                        if (result != null) {
+                          final updatedChild =
+                              result['payload'] as ChildEditPayload;
+                          final imageFile = result['imageFile'];
+
+                          // Perform update
+                          final updateResult = await childrenProvider
+                              .updateChild(updatedChild, imageFile);
+
+                          if (updateResult) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content:
+                                      const Text('Child updated successfully'),
+                                  backgroundColor:
+                                      AppColors.green.withOpacity(0.5),
+                                ),
+                              );
+                            }
+                          } else {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).clearSnackBars();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text('Failed to update child'),
+                                  backgroundColor:
+                                      AppColors.red.withOpacity(0.5),
+                                ),
+                              );
+                            }
+                          }
+                        }
                       },
                     );
                   },
@@ -231,9 +297,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ChildrenProvider>().fetchChildren();
-    });
+    context.read<ChildrenProvider>().fetchChildren();
+    context.read<ProfileProvider>().fetchProfile();
   }
 
   @override

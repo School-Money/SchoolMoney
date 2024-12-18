@@ -118,7 +118,6 @@ class _AddChildDialogState extends State<AddChildDialog> {
                             birthDate:
                                 (_selectedDate?.millisecondsSinceEpoch ?? 0) ~/
                                     1000,
-                            avatar: 'https://example.com/default-avatar.jpg',
                           );
                           Navigator.of(context).pop(childDetails);
                         }

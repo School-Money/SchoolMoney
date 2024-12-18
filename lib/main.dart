@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:school_money/feature/classes/classes_provider.dart';
 import 'package:school_money/feature/children/children_provider.dart';
 import 'package:school_money/feature/collections/collections_provider.dart';
+import 'package:school_money/feature/profile/profile_provider.dart';
 import 'package:school_money/screens/main/main_screen.dart';
 import 'auth/auth_provider.dart';
 
@@ -23,6 +24,7 @@ void main() async {
         ChangeNotifierProvider.value(value: ChildrenProvider()),
         ChangeNotifierProvider.value(value: ClassesProvider()),
         ChangeNotifierProvider.value(value: CollectionsProvider()),
+        ChangeNotifierProvider.value(value: ProfileProvider()),
       ],
       child: const App(),
     ),

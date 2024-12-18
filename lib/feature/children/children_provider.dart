@@ -3,6 +3,7 @@ import 'package:school_money/feature/children/children_service.dart';
 import 'package:school_money/feature/children/model/child_create_payload.dart';
 
 import 'model/child.dart';
+import 'model/child_edit_payload.dart';
 
 class ChildrenProvider extends ChangeNotifier {
   final ChildrenService _childrenService = ChildrenService();
@@ -37,6 +38,24 @@ class ChildrenProvider extends ChangeNotifier {
     } catch (e) {
       print(e);
       return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> updateChild(
+      ChildEditPayload childUpdate, dynamic imageInput) async {
+    _isLoading = true;
+    try {
+      await _childrenService.updateChild(childUpdate);
+      if (imageInput != null) {
+        await _childrenService.updateAvatar(imageInput, childUpdate.id);
+      }
+      await fetchChildren();
+      return true;
+    } catch (e) {
+      return true;
     } finally {
       _isLoading = false;
       notifyListeners();
