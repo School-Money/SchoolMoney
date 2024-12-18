@@ -40,7 +40,7 @@ class Collection {
       bankAccount: json['bankAccount'] as String,
       startDate: DateTime.parse(json['startDate'] as String),
       endDate: DateTime.parse(json['endDate'] as String),
-      currentAmount: (json['currentAmount'] as num).toDouble(),
+      currentAmount: ((json['currentAmount'] ?? 0) as num).toDouble(),
       targetAmount: (json['targetAmount'] as num).toDouble(),
       isBlocked: json['isBlocked'] as bool,
       version: json['__v'] as int,
