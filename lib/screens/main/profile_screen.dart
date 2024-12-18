@@ -172,7 +172,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           builder: (context) => const AddChildDialog(),
                         );
                         if (childDetails != null) {
-                          log(childDetails.toJson().toString());
                           final result =
                               await childrenProvider.createChild(childDetails);
                           if (result) {
@@ -224,65 +223,75 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 )
               else
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    childAspectRatio: 0.8,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                  ),
-                  itemCount: childrenProvider.children.length,
-                  itemBuilder: (context, index) {
-                    final child = childrenProvider.children[index];
-                    return StudentCard(
-                      imageUrl: child.avatar,
-                      firstName: child.firstName,
-                      lastName: child.lastName,
-                      className: '',
-                      onTap: () async {
-                        final result = await showDialog(
-                          context: context,
-                          builder: (context) => EditChildDialog(
-                            existingChild: child,
-                          ),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    int crossAxisCount =
+                        _calculateCrossAxisCount(constraints.maxWidth);
+
+                    return GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: crossAxisCount,
+                        childAspectRatio: 1.3,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: childrenProvider.children.length,
+                      itemBuilder: (context, index) {
+                        final child = childrenProvider.children[index];
+                        return StudentCard(
+                          imageUrl: child.avatar,
+                          firstName: child.firstName,
+                          lastName: child.lastName,
+                          className: child.className ?? '',
+                          onTap: () async {
+                            final result = await showDialog(
+                              context: context,
+                              builder: (context) => EditChildDialog(
+                                existingChild: child,
+                              ),
+                            );
+
+                            if (result != null) {
+                              final updatedChild =
+                                  result['payload'] as ChildEditPayload;
+                              final imageFile = result['imageFile'];
+
+                              // Perform update
+                              final updateResult = await childrenProvider
+                                  .updateChild(updatedChild, imageFile);
+
+                              if (updateResult) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context)
+                                      .clearSnackBars();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
+                                          'Child updated successfully'),
+                                      backgroundColor:
+                                          AppColors.green.withOpacity(0.5),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context)
+                                      .clearSnackBars();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          const Text('Failed to update child'),
+                                      backgroundColor:
+                                          AppColors.red.withOpacity(0.5),
+                                    ),
+                                  );
+                                }
+                              }
+                            }
+                          },
                         );
-
-                        if (result != null) {
-                          final updatedChild =
-                              result['payload'] as ChildEditPayload;
-                          final imageFile = result['imageFile'];
-
-                          // Perform update
-                          final updateResult = await childrenProvider
-                              .updateChild(updatedChild, imageFile);
-
-                          if (updateResult) {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content:
-                                      const Text('Child updated successfully'),
-                                  backgroundColor:
-                                      AppColors.green.withOpacity(0.5),
-                                ),
-                              );
-                            }
-                          } else {
-                            if (context.mounted) {
-                              ScaffoldMessenger.of(context).clearSnackBars();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text('Failed to update child'),
-                                  backgroundColor:
-                                      AppColors.red.withOpacity(0.5),
-                                ),
-                              );
-                            }
-                          }
-                        }
                       },
                     );
                   },
@@ -335,5 +344,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         }
       },
     );
+  }
+
+  int _calculateCrossAxisCount(double width) {
+    if (width < 600) return 1;
+    if (width < 700) return 2;
+    if (width < 1000) return 3;
+    if (width < 1300) return 4;
+    return 5;
   }
 }
