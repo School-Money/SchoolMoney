@@ -8,6 +8,8 @@ import 'package:school_money/admin/model/parent.dart';
 
 class AdminProvider extends ChangeNotifier {
   final AdminService _adminService = AdminService();
+  List<Parent> _parents = [];
+  List<Collection> _collections = [];
   bool _isLoading = false;
   String _reportEntity = '';
   String _reportEntityId = '';
@@ -15,9 +17,6 @@ class AdminProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   String get reportEntity => _reportEntity;
-
-  List<Parent> _parents = [];
-  List<Collection> _collections = [];
 
   get parents => _parents;
   get collections => _collections;

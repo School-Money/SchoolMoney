@@ -82,6 +82,7 @@ class AdminService {
         '$_baseUrl/admin/collections',
       )
           .then((response) {
+        print(response);
         return (response.data as List)
             .map((collection) => Collection.fromJson(collection))
             .toList();
@@ -121,7 +122,7 @@ class AdminService {
 
   Future<void> switchBlockCollectionStatus(String collectionId) async {
     try {
-      _authService.authenticatedDio.put(
+      _authService.authenticatedDio.patch(
         '$_baseUrl/admin/collections/block/$collectionId',
       );
     } on DioException catch (e) {
