@@ -24,13 +24,6 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
     });
   }
 
-  // void _showCreateCollectionDialog() {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => const CreateCollectionDialog(),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,23 +121,6 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                 },
               ),
             ),
-
-            // OverflowBar(
-            //   alignment: MainAxisAlignment.center,
-            //   children: [
-            //     Padding(
-            //       padding: const EdgeInsets.symmetric(vertical: 16),
-            //       child: SizedBox(
-            //         height: 40,
-            //         width: 200,
-            //         child: AuthButton(
-            //           text: 'Create collection',
-            //           onPressed: _showCreateCollectionDialog,
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
           ],
         ),
       ),
