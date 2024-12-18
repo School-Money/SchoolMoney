@@ -12,16 +12,19 @@ class AuthTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final TextEditingController? controller;
   final bool enabled;
+  final Color? backgroundColor;
 
-  const AuthTextField(
-      {super.key,
-      required this.hintText,
-      required this.prefixIcon,
-      this.type = TextFieldVariant.common,
-      this.inputFormatters,
-      this.onChanged,
-      this.controller,
-      this.enabled = true});
+  const AuthTextField({
+    super.key,
+    required this.hintText,
+    required this.prefixIcon,
+    this.type = TextFieldVariant.common,
+    this.inputFormatters,
+    this.onChanged,
+    this.controller,
+    this.enabled = true,
+    this.backgroundColor,
+  });
 
   @override
   State<AuthTextField> createState() => _AuthTextFieldState();
@@ -36,7 +39,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
       height: 56,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: AppColors.primary,
+        color: widget.backgroundColor ?? AppColors.primary,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: AppColors.secondary,

@@ -6,7 +6,7 @@ import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/components/main/class_card.dart';
 import 'package:school_money/feature/classes/classes_provider.dart';
 import 'package:school_money/feature/classes/classes_service.dart';
-import 'package:school_money/feature/classes/model/class_details_payload.dart';
+import 'package:school_money/feature/class-details/model/class_details_payload.dart';
 
 class ClassesScreen extends StatefulWidget {
   const ClassesScreen({super.key});

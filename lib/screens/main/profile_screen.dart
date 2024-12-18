@@ -10,6 +10,7 @@ import 'package:school_money/feature/children/model/child_create_payload.dart';
 import 'package:school_money/feature/children/model/child_edit_payload.dart';
 import 'package:school_money/feature/children/ui/add_child_dialog.dart';
 import 'package:school_money/feature/children/ui/edit_child_dialog.dart';
+import 'package:school_money/feature/children/ui/update_balance_dialog.dart';
 import 'package:school_money/feature/profile/profile_provider.dart';
 import 'package:school_money/feature/profile/ui/user_avatar.dart';
 import '../../auth/auth_provider.dart';
@@ -30,12 +31,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _emailController = TextEditingController();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
+  final _balanceController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
+    _balanceController.dispose();
     super.dispose();
   }
 
@@ -59,6 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _emailController.text = profileProvider.profile!.email;
           _firstNameController.text = profileProvider.profile!.firstName;
           _lastNameController.text = profileProvider.profile!.lastName;
+          _balanceController.text = profileProvider.profile!.balance.toString();
         }
 
         return Container(
@@ -100,6 +104,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         hintText: 'Last name',
                         prefixIcon: Icons.person,
                         enabled: false,
+                      ),
+                      const SizedBox(height: 16),
+                      MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: () async {
+                            final amount = await showDialog<String>(
+                              context: context,
+                              builder: (context) => const UpdateBalanceDialog(),
+                            );
+                            if (amount != null) {
+                              await profileProvider
+                                  .updateBalance(double.parse(amount));
+                            }
+                          },
+                          child: AuthTextField(
+                            controller: _balanceController,
+                            hintText: 'Balance',
+                            prefixIcon: Icons.monetization_on,
+                            enabled: false,
+                            backgroundColor: AppColors.accent.withOpacity(0.3),
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 16),
                       AuthButton(
@@ -306,8 +333,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ChildrenProvider>().fetchChildren();
-    context.read<ProfileProvider>().fetchProfile();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProfileProvider>().fetchProfile();
+      context.read<ChildrenProvider>().fetchChildren();
+    });
   }
 
   @override

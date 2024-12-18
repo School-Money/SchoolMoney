@@ -11,7 +11,6 @@ class Collection {
   final double currentAmount;
   final double targetAmount;
   final bool isBlocked;
-  final int version;
 
   Collection({
     required this.id,
@@ -26,7 +25,6 @@ class Collection {
     required this.currentAmount,
     required this.targetAmount,
     required this.isBlocked,
-    required this.version,
   });
 
   factory Collection.fromJson(Map<String, dynamic> json) {
@@ -40,10 +38,9 @@ class Collection {
       bankAccount: json['bankAccount'] as String,
       startDate: DateTime.parse(json['startDate'] as String),
       endDate: DateTime.parse(json['endDate'] as String),
-      currentAmount: (json['currentAmount'] as num).toDouble(),
+      currentAmount: ((json['currentAmount'] ?? 0) as num).toDouble(),
       targetAmount: (json['targetAmount'] as num).toDouble(),
       isBlocked: json['isBlocked'] as bool,
-      version: json['__v'] as int,
     );
   }
 
@@ -60,12 +57,11 @@ class Collection {
       'endDate': endDate.toIso8601String(),
       'targetAmount': targetAmount,
       'isBlocked': isBlocked,
-      '__v': version,
     };
   }
 
   @override
   String toString() {
-    return 'Collection{id: $id, classId: $classId, creator: $creator, title: $title, description: $description, logo: $logo, bankAccount: $bankAccount, startDate: $startDate, endDate: $endDate, targetAmount: $targetAmount, isBlocked: $isBlocked, version: $version}';
+    return 'Collection{id: $id, classId: $classId, creator: $creator, title: $title, description: $description, logo: $logo, bankAccount: $bankAccount, startDate: $startDate, endDate: $endDate, targetAmount: $targetAmount, isBlocked: $isBlocked}';
   }
 }

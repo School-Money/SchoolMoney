@@ -42,4 +42,14 @@ class ProfileProvider extends ChangeNotifier {
       rethrow;
     }
   }
+
+  Future<void> updateBalance(double newBalance) async {
+    try {
+      await _profileService.updateBalance(newBalance);
+      await fetchProfile();
+    } catch (e) {
+      print('Failed to update balance: $e');
+      rethrow;
+    }
+  }
 }

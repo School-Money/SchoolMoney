@@ -60,14 +60,12 @@ class CollectionsService {
     }
   }
 
-  Future<Collection> createCollection(CreateCollectionPayload payload) async {
+  Future<void> createCollection(CreateCollectionPayload payload) async {
     try {
-      final response = await _authService.authenticatedDio.post(
+      await _authService.authenticatedDio.post(
         '$_baseUrl/collections',
         data: payload.toJson(),
       );
-
-      return Collection.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response != null) {
         throw Exception(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:school_money/feature/classes/classes_service.dart';
-import 'package:school_money/feature/classes/model/class_details.dart';
+import 'package:school_money/feature/class-details/model/class_details.dart';
 
 import 'model/class.dart';
 
