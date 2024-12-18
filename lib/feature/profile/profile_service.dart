@@ -35,24 +35,6 @@ class ProfileService {
     }
   }
 
-  Future<Uint8List?> getProfileImage() async {
-    try {
-      final response = await _authService.authenticatedDio.get(
-          '$_baseUrl/parents/avatar',
-          options: Options(responseType: ResponseType.bytes));
-
-      return response.data;
-    } on DioException catch (e) {
-      if (e.response != null) {
-        throw Exception('Błąd pobierania danych: ${e.response?.statusCode}');
-      } else {
-        throw Exception('Błąd połączenia z serwerem: ${e.message}');
-      }
-    } catch (e) {
-      throw Exception('Wystąpił nieoczekiwany błąd: $e');
-    }
-  }
-
   Future<void> uploadProfilePhoto(dynamic imageInput) async {
     try {
       MultipartFile multipartFile;

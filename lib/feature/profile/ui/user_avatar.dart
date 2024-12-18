@@ -6,7 +6,7 @@ class UserAvatar extends StatelessWidget {
   final double size;
   final Color backgroundColor;
   final Color textColor;
-  final Uint8List? avatar;
+  final String? avatar;
 
   const UserAvatar({
     super.key,
@@ -34,7 +34,7 @@ class UserAvatar extends StatelessWidget {
             shape: BoxShape.circle,
             image: avatar != null
                 ? DecorationImage(
-                    image: MemoryImage(avatar!),
+                    image: NetworkImage(avatar!),
                     fit: BoxFit.cover,
                   )
                 : null,

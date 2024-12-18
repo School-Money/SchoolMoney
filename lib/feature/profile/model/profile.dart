@@ -4,6 +4,7 @@ class Profile {
   final String firstName;
   final String lastName;
   final double balance;
+  final String avatar;
 
   Profile({
     required this.id,
@@ -11,6 +12,7 @@ class Profile {
     required this.firstName,
     required this.lastName,
     required this.balance,
+    required this.avatar,
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) => Profile(
@@ -19,5 +21,6 @@ class Profile {
         firstName: json['firstName'],
         lastName: json['lastName'],
         balance: json['balance'],
+        avatar: json['avatar'],
       );
 }

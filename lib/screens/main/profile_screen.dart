@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             direction: Axis.vertical,
             children: [
               UserAvatar(
-                avatar: profileProvider.avatar,
+                avatar: profileProvider.profile?.avatar,
                 name: profileProvider.profile != null
                     ? "${profileProvider.profile!.firstName} ${profileProvider.profile!.lastName}"
                     : "User",
@@ -135,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           showDialog(
                             context: context,
                             builder: (context) => EditProfilePhotoDialog(
-                              currentAvatar: profileProvider.avatar,
+                              currentAvatar: profileProvider.profile?.avatar,
                             ),
                           );
                         },
