@@ -7,15 +7,14 @@ import 'package:school_money/components/profile/edit_avatar_dialog.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/children/children_provider.dart';
 import 'package:school_money/feature/children/model/child_create_payload.dart';
-import 'package:school_money/feature/children/ui/add_child_dialog.dart';
+import 'package:school_money/feature/children/model/child_edit_payload.dart';
+import 'package:school_money/feature/children/ui/edit_child_dialog.dart';
 import 'package:school_money/feature/profile/profile_provider.dart';
 import 'package:school_money/feature/profile/ui/user_avatar.dart';
 import '../../auth/auth_provider.dart';
 import '../../components/auth/auth_button.dart';
 import '../../components/auth/auth_text_field.dart';
 import '../../components/student_card.dart';
-import '../../feature/collection/model/child_edit_payload.dart';
-import '../../feature/collection/ui/edit_child_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -234,20 +233,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       imageUrl: child.avatar,
                       firstName: child.firstName,
                       lastName: child.lastName,
-                      className: '', // TODO: Add class to Child model if needed
+                      className: '',
                       onTap: () async {
-                        final updatedChild =
-                            await showDialog<ChildEditPayload>(
+                        final result = await showDialog(
                           context: context,
                           builder: (context) => EditChildDialog(
                             existingChild: child,
                           ),
                         );
 
-                        if (updatedChild != null) {
-                          final result =
-                              await childrenProvider.updateChild(updatedChild);
-                          if (result) {
+                        if (result != null) {
+                          final updatedChild =
+                              result['payload'] as ChildEditPayload;
+                          final imageFile = result['imageFile'];
+
+                          // Perform update
+                          final updateResult = await childrenProvider
+                              .updateChild(updatedChild, imageFile);
+
+                          if (updateResult) {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(

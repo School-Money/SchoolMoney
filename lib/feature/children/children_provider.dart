@@ -44,13 +44,15 @@ class ChildrenProvider extends ChangeNotifier {
     }
   }
 
-  Future updateChild(ChildEditPayload childUpdate) async {
+  Future<bool> updateChild(
+      ChildEditPayload childUpdate, dynamic imageInput) async {
     try {
       await _childrenService.updateChild(childUpdate);
-      _children = await _childrenService.getMyChildren();
-      fetchChildren();
+      await _childrenService.updateAvatar(imageInput, childUpdate.id);
+      await fetchChildren();
+      return true;
     } catch (e) {
-      // nothing
+      return true;
     } finally {
       _isLoading = false;
       notifyListeners();
