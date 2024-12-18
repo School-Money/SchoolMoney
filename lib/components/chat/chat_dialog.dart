@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:school_money/auth/auth_service.dart';
+import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/chats/admin_chat_manager.dart';
 import 'package:school_money/feature/chats/base_chat_manager.dart';
 import 'package:school_money/feature/chats/class_chat_manager.dart';
@@ -153,6 +154,8 @@ class _ChatDialogState extends State<ChatDialog> {
       ),
       theme: DefaultChatTheme(
         backgroundColor: Colors.white,
+        primaryColor: AppColors.primary,
+        secondaryColor: AppColors.secondary,
       ),
     );
   }

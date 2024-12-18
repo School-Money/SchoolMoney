@@ -40,6 +40,13 @@ class App extends StatelessWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         scaffoldBackgroundColor: AppColors.primary,
+        primaryColor: AppColors.primary,
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: AppColors.accent,
+        ),
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: AppColors.accent,
+        ),
       ),
       themeMode: ThemeMode.light,
       debugShowCheckedModeBanner: false,
