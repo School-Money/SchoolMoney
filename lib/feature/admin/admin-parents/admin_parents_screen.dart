@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:school_money/admin/admin_service.dart';
-import 'package:school_money/admin/model/parent.dart';
+import 'package:provider/provider.dart';
+import 'package:school_money/admin/admin_provider.dart';
 import 'package:school_money/components/admin/parent_card.dart';
 import 'package:school_money/constants/app_colors.dart';
 
@@ -14,34 +14,12 @@ class AdminParentsScreen extends StatefulWidget {
 }
 
 class _AdminParentsScreenState extends State<AdminParentsScreen> {
-  List<Parent> _parents = [];
-  bool _isLoading = true;
-  String _errorMessage = '';
-
   @override
   void initState() {
     super.initState();
-    _fetchParents();
-  }
-
-  Future<void> _fetchParents() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = '';
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AdminProvider>().fetchParents();
     });
-
-    try {
-      final fetchedParents = await AdminService().getAllParents();
-      setState(() {
-        _parents = fetchedParents;
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _errorMessage = e.toString();
-      });
-    }
   }
 
   int _calculateCrossAxisCount(double width) {
@@ -60,54 +38,44 @@ class _AdminParentsScreenState extends State<AdminParentsScreen> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: _fetchParents,
-          ),
+              icon: Icon(Icons.refresh),
+              onPressed: () => context.read<AdminProvider>().fetchParents()),
         ],
       ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _errorMessage.isNotEmpty
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Error: $_errorMessage'),
-                      ElevatedButton(
-                        onPressed: _fetchParents,
-                        child: Text('Retry'),
+      body: Consumer<AdminProvider>(builder: (context, provider, child) {
+        if (provider.isLoading) {
+          return Center(child: CircularProgressIndicator());
+        }
+        return provider.parents.isEmpty
+            ? Center(child: Text('No parents found'))
+            : LayoutBuilder(
+                builder: (context, constraints) {
+                  return RefreshIndicator(
+                    onRefresh: () =>
+                        context.read<AdminProvider>().fetchParents(),
+                    child: GridView.builder(
+                      padding: EdgeInsets.all(8.0),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount:
+                            _calculateCrossAxisCount(constraints.maxWidth),
+                        crossAxisSpacing: 8.0,
+                        mainAxisSpacing: 8.0,
+                        childAspectRatio: 1.5,
                       ),
-                    ],
-                  ),
-                )
-              : _parents.isEmpty
-                  ? Center(child: Text('No parents found'))
-                  : LayoutBuilder(
-                      builder: (context, constraints) {
-                        return RefreshIndicator(
-                          onRefresh: _fetchParents,
-                          child: GridView.builder(
-                            padding: EdgeInsets.all(8.0),
-                            gridDelegate:
-                                SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: _calculateCrossAxisCount(
-                                  constraints.maxWidth),
-                              crossAxisSpacing: 8.0,
-                              mainAxisSpacing: 8.0,
-                              childAspectRatio: 1.5,
-                            ),
-                            itemCount: _parents.length,
-                            itemBuilder: (context, index) {
-                              final parent = _parents[index];
-                              return ParentCard(
-                                parent: parent,
-                                onBlockToggle: _fetchParents,
-                              );
-                            },
-                          ),
+                      itemCount: provider.parents.length,
+                      itemBuilder: (context, index) {
+                        final parent = provider.parents[index];
+                        return ParentCard(
+                          parent: parent,
+                          onBlockToggle: () =>
+                              context.read<AdminProvider>().fetchParents(),
                         );
                       },
                     ),
+                  );
+                },
+              );
+      }),
     );
   }
 }

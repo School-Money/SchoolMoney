@@ -4,12 +4,34 @@ import 'package:school_money/admin/model/parent.dart';
 
 class AdminProvider extends ChangeNotifier {
   final AdminService _adminService = AdminService();
+  List<Parent> _parents = [];
+  bool _isLoading = false;
+
+  get parents => _parents;
+  get isLoading => _isLoading;
+
+  Future<void> fetchParents() async {
+    try {
+      if (_parents.isEmpty) {
+        _isLoading = true;
+      }
+      final fetchedParents = await AdminService().getAllParents();
+      _parents = fetchedParents;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 
   Future<void> toggleParentBlockStatus(
       BuildContext context, Parent parent) async {
     try {
       // Call the service method to switch block status
       await _adminService.switchBlockOnParent(parent.id);
+      await fetchParents();
 
       // Show success message
       ScaffoldMessenger.of(context).showSnackBar(
