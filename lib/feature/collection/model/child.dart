@@ -5,6 +5,7 @@ class Child {
   final DateTime birthDate;
   final String avatar;
   final String parentId;
+  final String? classCode;
 
   Child({
     required this.id,
@@ -13,6 +14,7 @@ class Child {
     required this.birthDate,
     required this.avatar,
     required this.parentId,
+    this.classCode,
   });
 
   factory Child.fromJson(Map<String, dynamic> json) => Child(
@@ -22,5 +24,6 @@ class Child {
         birthDate: DateTime.parse(json['birthDate']),
         avatar: json['avatar'],
         parentId: json['parent'],
+        classCode: json['class'],
       );
 }

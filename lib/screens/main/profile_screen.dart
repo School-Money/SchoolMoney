@@ -6,7 +6,6 @@ import 'package:school_money/components/profile/edit_avatar_dialog.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/collection/children_provider.dart';
 import 'package:school_money/feature/collection/model/child_create_payload.dart';
-import 'package:school_money/feature/collection/ui/add_child_dialog.dart';
 import 'package:school_money/feature/profile/profile_provider.dart';
 import 'package:school_money/feature/profile/ui/user_avatar.dart';
 import '../../auth/auth_provider.dart';
@@ -216,20 +215,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       imageUrl: child.avatar,
                       firstName: child.firstName,
                       lastName: child.lastName,
-                      className: '', // TODO: Add class to Child model if needed
+                      className: '',
                       onTap: () async {
-                        final updatedChild =
-                            await showDialog<ChildEditPayload>(
+                        final result = await showDialog(
                           context: context,
                           builder: (context) => EditChildDialog(
                             existingChild: child,
                           ),
                         );
 
-                        if (updatedChild != null) {
-                          final result =
-                              await childrenProvider.updateChild(updatedChild);
-                          if (result) {
+                        if (result != null) {
+                          final updatedChild =
+                              result['payload'] as ChildEditPayload;
+                          final imageFile = result['imageFile'];
+
+                          // Perform update
+                          final updateResult = await childrenProvider
+                              .updateChild(updatedChild, imageFile);
+
+                          if (updateResult) {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).clearSnackBars();
                               ScaffoldMessenger.of(context).showSnackBar(
