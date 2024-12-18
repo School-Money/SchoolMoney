@@ -6,9 +6,10 @@ import '../../../auth/auth_service.dart';
 import '../../../components/student_card.dart';
 import '../../../constants/app_colors.dart';
 import '../../collections/ui/collections_details_screen.dart';
-import '../classes_provider.dart';
+import '../../collections/ui/create_collection_dialog.dart';
+import '../../classes/classes_provider.dart';
 import '../model/class_details.dart';
-import 'collection_card.dart';
+import '../../classes/ui/collection_card.dart';
 
 class ClassDetailsScreen extends StatefulWidget {
   final String classId;
@@ -45,6 +46,17 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
         );
       },
     );
+  }
+
+  void _showCreateCollectionDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CreateCollectionDialog(
+        classId: widget.classId,
+      ),
+    ).then((_) {
+      _fetchClassDetails();
+    });
   }
 
   Future<void> _fetchClassDetails() async {
@@ -92,6 +104,14 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
       appBar: AppBar(
         title: Text(_classDetails?.className ?? ''),
         backgroundColor: AppColors.gray,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              _showCreateCollectionDialog();
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: SizedBox(

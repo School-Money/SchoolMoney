@@ -333,8 +333,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ChildrenProvider>().fetchChildren();
-    context.read<ProfileProvider>().fetchProfile();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProfileProvider>().fetchProfile();
+      context.read<ChildrenProvider>().fetchChildren();
+    });
   }
 
   @override

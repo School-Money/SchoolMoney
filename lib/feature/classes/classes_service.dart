@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:school_money/feature/classes/model/class_details_payload.dart';
+import 'package:school_money/feature/class-details/model/class_details_payload.dart';
 
 import '../../auth/auth_service.dart';
 import 'model/class.dart';
-import 'model/class_details.dart';
+import '../class-details/model/class_details.dart';
 import 'model/pass_treasurer_payload.dart';
 
 class ClassesService {

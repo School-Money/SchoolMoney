@@ -10,7 +10,7 @@ import 'package:school_money/feature/collections/ui/collections_details_screen.d
 import 'package:school_money/screens/main/profile_screen.dart';
 
 import '../../auth/auth_provider.dart';
-import '../../feature/classes/ui/class_details_screen.dart';
+import '../../feature/class-details/ui/class_details_screen.dart';
 import '../../feature/classes/ui/classes_screen.dart';
 import 'collections_screen.dart';
 import 'home_screen.dart';

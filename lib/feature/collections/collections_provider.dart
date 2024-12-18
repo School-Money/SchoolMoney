@@ -32,7 +32,8 @@ class CollectionsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      collectionDetails = await _collectionService.getCollectionDetails(collectionId);
+      collectionDetails =
+          await _collectionService.getCollectionDetails(collectionId);
     } catch (e) {
       collectionDetails = null;
     } finally {
@@ -41,14 +42,13 @@ class CollectionsProvider extends ChangeNotifier {
     }
   }
 
-  Future<Collection?> createCollection(CreateCollectionPayload payload) async {
+  Future<void> createCollection(CreateCollectionPayload payload) async {
     try {
-      final newCollection = await _collectionService.createCollection(payload);
-      _collections.add(newCollection);
+      await _collectionService.createCollection(payload);
       notifyListeners();
-      return newCollection;
     } catch (e) {
-      return null;
+      // nothing
     }
+    return;
   }
 }
