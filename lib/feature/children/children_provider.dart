@@ -55,7 +55,7 @@ class ChildrenProvider extends ChangeNotifier {
       await fetchChildren();
       return true;
     } catch (e) {
-      return true;
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();
