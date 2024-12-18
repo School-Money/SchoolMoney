@@ -34,13 +34,8 @@ class _AdminParentsScreenState extends State<AdminParentsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Parents', style: TextStyle(color: AppColors.secondary)),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey,
         elevation: 0,
-        actions: [
-          IconButton(
-              icon: Icon(Icons.refresh),
-              onPressed: () => context.read<AdminProvider>().fetchParents()),
-        ],
       ),
       body: Consumer<AdminProvider>(builder: (context, provider, child) {
         if (provider.isLoading) {
