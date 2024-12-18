@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:school_money/feature/collections/model/collectionDetails/collection_details.dart';
 import 'package:school_money/feature/collections/model/create_collections_payload.dart';
+import 'package:school_money/feature/collections/model/payment/payment_details.dart';
 import '../../auth/auth_service.dart';
 import 'model/collection.dart';
 
@@ -9,7 +10,7 @@ class CollectionsService {
   final AuthService _authService = AuthService();
   static final String _baseUrl = dotenv.env['BASE_URL'] ?? '';
   static final CollectionsService _instance = CollectionsService._internal();
-  
+
   factory CollectionsService() => _instance;
   CollectionsService._internal();
 
@@ -18,17 +19,18 @@ class CollectionsService {
       final response = await _authService.authenticatedDio.get(
         '$_baseUrl/collections',
       );
-      
+
       if (response.data is! List) {
         throw Exception('Invalid data format');
       }
-      
+
       return (response.data as List)
           .map((collectionData) => Collection.fromJson(collectionData))
           .toList();
     } on DioException catch (e) {
       if (e.response != null) {
-        throw Exception('Error fetching collections: ${e.response?.statusCode}');
+        throw Exception(
+            'Error fetching collections: ${e.response?.statusCode}');
       } else {
         throw Exception('Server connection error: ${e.message}');
       }
@@ -42,13 +44,14 @@ class CollectionsService {
       final response = await _authService.authenticatedDio.get(
         '$_baseUrl/collections/$collectionId',
       );
-      
+
       print('response: $response');
 
       return CollectionDetails.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response != null) {
-        throw Exception('Error fetching collection details: ${e.response?.statusCode}');
+        throw Exception(
+            'Error fetching collection details: ${e.response?.statusCode}');
       } else {
         throw Exception('Server connection error: ${e.message}');
       }
@@ -58,21 +61,58 @@ class CollectionsService {
   }
 
   Future<Collection> createCollection(CreateCollectionPayload payload) async {
-  try {
-    final response = await _authService.authenticatedDio.post(
-      '$_baseUrl/collections',
-      data: payload.toJson(),
-    );
-    
-    return Collection.fromJson(response.data);
-  } on DioException catch (e) {
-    if (e.response != null) {
-      throw Exception('Error creating collection: ${e.response?.data['message'] ?? e.response?.statusCode}');
-    } else {
-      throw Exception('Server connection error: ${e.message}');
+    try {
+      final response = await _authService.authenticatedDio.post(
+        '$_baseUrl/collections',
+        data: payload.toJson(),
+      );
+
+      return Collection.fromJson(response.data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(
+            'Error creating collection: ${e.response?.data['message'] ?? e.response?.statusCode}');
+      } else {
+        throw Exception('Server connection error: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
     }
-  } catch (e) {
-    throw Exception('Unexpected error: $e');
   }
-}
+
+  Future createAPayment(PaymentDetails paymentDetails) async {
+    try {
+      await _authService.authenticatedDio.post(
+        '$_baseUrl/payments',
+        data: paymentDetails.toJson(),
+      );
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(
+            'Error creating payment: ${e.response?.data['message'] ?? e.response?.statusCode}');
+      } else {
+        throw Exception('Server connection error: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  Future withdrawPayment(String paymentId) async {
+    try {
+      await _authService.authenticatedDio.post(
+        '$_baseUrl/payments/withdraw',
+        data: {'paymentId': paymentId},
+      );
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(
+            'Error deleting payment: ${e.response?.data['message'] ?? e.response?.statusCode}');
+      } else {
+        throw Exception('Server connection error: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
 }

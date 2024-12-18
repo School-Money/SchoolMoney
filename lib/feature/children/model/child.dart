@@ -29,4 +29,15 @@ class Child {
         classCode: json['class'],
         className: json['className'],
       );
+
+  Map<String, dynamic> toJson() => {
+        '_id': id,
+        'firstName': firstName,
+        'lastName': lastName,
+        'birthDate': birthDate.toIso8601String(),
+        'avatar': avatar,
+        'parent': parentId,
+        'class': classCode,
+        'className': className,
+      };
 }

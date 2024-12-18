@@ -1,5 +1,5 @@
 import 'package:school_money/feature/collections/model/collectionDetails/parent.dart';
-import 'package:school_money/feature/collections/model/collectionDetails/payment_child.dart';
+import 'package:school_money/feature/collections/model/payment/payment_child.dart';
 
 class Payment {
   final String id;

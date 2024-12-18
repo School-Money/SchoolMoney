@@ -3,6 +3,7 @@ import 'package:school_money/feature/collections/collections_service.dart';
 import 'package:school_money/feature/collections/model/collection.dart';
 import 'package:school_money/feature/collections/model/collectionDetails/collection_details.dart';
 import 'package:school_money/feature/collections/model/create_collections_payload.dart';
+import 'package:school_money/feature/collections/model/payment/payment_details.dart';
 
 class CollectionsProvider extends ChangeNotifier {
   final CollectionsService _collectionService = CollectionsService();
@@ -33,6 +34,7 @@ class CollectionsProvider extends ChangeNotifier {
 
     try {
       collectionDetails = await _collectionService.getCollectionDetails(collectionId);
+      print('collectionDetails: $collectionDetails');
     } catch (e) {
       collectionDetails = null;
     } finally {
@@ -49,6 +51,34 @@ class CollectionsProvider extends ChangeNotifier {
       return newCollection;
     } catch (e) {
       return null;
+    }
+  }
+
+  Future<void> createAPayment(PaymentDetails paymentDetails) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _collectionService.createAPayment(paymentDetails);
+    } catch (e) {
+      // nothing
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> withdrawPayment(String paymentId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _collectionService.withdrawPayment(paymentId);
+    } catch (e) {
+      // nothing
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

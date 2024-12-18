@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:school_money/constants/app_colors.dart';
 
 enum TextFieldVariant { common, password, repeatPassword }
@@ -7,6 +8,8 @@ class AuthTextField extends StatefulWidget {
   final String hintText;
   final IconData prefixIcon;
   final TextFieldVariant type;
+  final List<TextInputFormatter>? inputFormatters;
+  final ValueChanged<String>? onChanged;
   final TextEditingController? controller;
   final bool enabled;
 
@@ -15,6 +18,8 @@ class AuthTextField extends StatefulWidget {
       required this.hintText,
       required this.prefixIcon,
       this.type = TextFieldVariant.common,
+      this.inputFormatters,
+      this.onChanged,
       this.controller,
       this.enabled = true});
 
@@ -82,6 +87,8 @@ class _AuthTextFieldState extends State<AuthTextField> {
             vertical: 16,
           ),
         ),
+        inputFormatters: widget.inputFormatters,
+        onChanged: widget.onChanged,
       ),
     );
   }

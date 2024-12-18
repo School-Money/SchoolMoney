@@ -1,12 +1,14 @@
+import 'package:school_money/feature/children/model/child.dart';
 import 'package:school_money/feature/collections/model/collectionDetails/parent.dart';
 
-import 'payment.dart';
+import '../payment/payment.dart';
 import 'package:school_money/feature/collections/model/collection_class.dart';
 
 class CollectionDetails {
   final String id;
   final CollectionClass collectionClass;
   final List<Payment> payments;
+  final List<Child> children;
   final Parent creator;
   final String title;
   final String description;
@@ -21,6 +23,7 @@ class CollectionDetails {
     required this.id,
     required this.collectionClass,
     required this.payments,
+    required this.children,
     required this.creator,
     required this.title,
     required this.description,
@@ -35,10 +38,14 @@ class CollectionDetails {
   factory CollectionDetails.fromJson(Map<String, dynamic> json) {
     return CollectionDetails(
       id: json['_id'] as String,
-      collectionClass: CollectionClass.fromJson(json['class'] as Map<String, dynamic>),
+      collectionClass:
+          CollectionClass.fromJson(json['class'] as Map<String, dynamic>),
       payments: (json['payments'] as List?)
-          ?.map((paymentJson) => Payment.fromJson(paymentJson as Map<String, dynamic>))
-          .toList() ?? [],
+              ?.map((paymentJson) => Payment.fromJson(paymentJson as Map<String, dynamic>))
+              .toList() ?? [],
+      children: (json['children'] as List?)
+              ?.map((paymentJson) => Child.fromJson(paymentJson as Map<String, dynamic>))
+              .toList() ?? [],
       creator: Parent.fromJson(json['creator'] as Map<String, dynamic>),
       title: json['title'] as String,
       description: json['description'] as String,
@@ -56,6 +63,7 @@ class CollectionDetails {
       '_id': id,
       'class': collectionClass.toJson(),
       'payments': payments.map((payment) => payment.toJson()).toList(),
+      'children': children.map((child) => child.toJson()).toList(),
       'creator': creator.toJson(),
       'title': title,
       'description': description,
@@ -69,8 +77,8 @@ class CollectionDetails {
   }
 
   // Helper method to calculate progress
-  double get progressPercentage => 
-    targetAmount > 0 ? (currentAmount / targetAmount) * 100 : 0.0;
+  double get progressPercentage =>
+      targetAmount > 0 ? (currentAmount / targetAmount) * 100 : 0.0;
 
   // Helper method to calculate remaining amount
   double get remainingAmount => targetAmount - currentAmount;
