@@ -91,4 +91,24 @@ class ProfileService {
       rethrow;
     }
   }
+
+  Future<void> updateBalance(double amount) async {
+    try {
+      await _authService.authenticatedDio.patch(
+        '$_baseUrl/parents/balance',
+        data: {
+          'amount': amount,
+        },
+      );
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception('Błąd aktualizacji salda: ${e.response?.statusCode}');
+      } else {
+        throw Exception('Błąd połączenia z serwerem: ${e.message}');
+      }
+    } catch (e) {
+      print(e);
+      throw Exception('Wystąpił nieoczekiwany błąd: $e');
+    }
+  }
 }
