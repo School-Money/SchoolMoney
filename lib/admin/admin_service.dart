@@ -82,7 +82,6 @@ class AdminService {
         '$_baseUrl/admin/collections',
       )
           .then((response) {
-        print(response);
         return (response.data as List)
             .map((collection) => Collection.fromJson(collection))
             .toList();
