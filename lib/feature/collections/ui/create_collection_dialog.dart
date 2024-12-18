@@ -137,13 +137,13 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
         }
       } finally {
         if (mounted) {
-          setState(() {
-            _isCreating = false;
-          });
           Navigator.of(context).pop();
         }
       }
     }
+    setState(() {
+      _isCreating = false;
+    });
   }
 
   @override
