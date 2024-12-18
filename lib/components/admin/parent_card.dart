@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:school_money/admin/admin_provider.dart';
 import 'package:school_money/admin/model/parent.dart';
 import 'package:school_money/components/auth/auth_button.dart';
+import 'package:school_money/components/chat/chat_dialog.dart';
 
 class ParentCard extends StatelessWidget {
   final Parent parent;
@@ -13,6 +14,18 @@ class ParentCard extends StatelessWidget {
     required this.parent,
     required this.onBlockToggle,
   }) : super(key: key);
+
+  void _showChatDialog(BuildContext context, String receiverId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return ChatDialog(
+          receiver: receiverId,
+          isClass: false,
+        );
+      },
+    );
+  }
 
   void _showBlockConfirmationDialog(BuildContext context) {
     showDialog(
@@ -128,7 +141,7 @@ class ParentCard extends StatelessWidget {
                     padding: EdgeInsets.only(right: 8.0),
                     child: AuthButton(
                       text: 'Chat',
-                      onPressed: () {}, // Add navigation or details action
+                      onPressed: () => _showChatDialog(context, parent.id),
                       variant: ButtonVariant.primary,
                     ),
                   ),

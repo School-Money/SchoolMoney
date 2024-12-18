@@ -34,75 +34,66 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (navigatorKey.currentState?.canPop() ?? false) {
-          navigatorKey.currentState?.pop();
-          return false;
-        }
-        return true;
-      },
-      child: Scaffold(
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(60),
-          child: MainTopBar(
-            isAdmin: context.read<AuthProvider>().isAdmin,
-            currentPage: currentPage,
-            onPageSelected: _navigateToPage,
-          ),
-        ),
-        drawer: MainTopBarDrawer(
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: MainTopBar(
+          isAdmin: context.read<AuthProvider>().isAdmin,
           currentPage: currentPage,
           onPageSelected: _navigateToPage,
         ),
-        body: Navigator(
-          key: navigatorKey,
-          initialRoute:
-              context.read<AuthProvider>().isAdmin ? '/admin-parents' : '/home',
-          onGenerateRoute: (RouteSettings settings) {
-            Widget page;
-            switch (settings.name) {
-              case '/collections':
-                page = const CollectionsScreen();
-                break;
-              case '/expenses':
-                page = const ExpensesScreen();
-                break;
-              case '/classes':
-                page = const ClassesScreen();
-                break;
-              case '/class-details':
-                final String classId = settings.arguments as String;
-                page = ClassDetailsScreen(classId: classId);
-                break;
-              case '/profile':
-                page = context.read<AuthProvider>().isAdmin
-                    ? const AdminProfileScreen()
-                    : const ProfileScreen();
-                break;
-              case '/admin-collections':
-                page = const AdminCollectionsScreen();
-                break;
-              case '/admin-parents':
-                page = const AdminParentsScreen();
-                break;
-              case '/admin-report':
-                page = const AdminReportScreen();
-                break;
-              case '/home':
-              default:
-                page = const HomeScreen();
-                break;
-            }
+      ),
+      drawer: MainTopBarDrawer(
+        currentPage: currentPage,
+        onPageSelected: _navigateToPage,
+      ),
+      body: Navigator(
+        key: navigatorKey,
+        initialRoute:
+            context.read<AuthProvider>().isAdmin ? '/admin-parents' : '/home',
+        onGenerateRoute: (RouteSettings settings) {
+          Widget page;
+          switch (settings.name) {
+            case '/collections':
+              page = const CollectionsScreen();
+              break;
+            case '/expenses':
+              page = const ExpensesScreen();
+              break;
+            case '/classes':
+              page = const ClassesScreen();
+              break;
+            case '/class-details':
+              final String classId = settings.arguments as String;
+              page = ClassDetailsScreen(classId: classId);
+              break;
+            case '/profile':
+              page = context.read<AuthProvider>().isAdmin
+                  ? const AdminProfileScreen()
+                  : const ProfileScreen();
+              break;
+            case '/admin-collections':
+              page = const AdminCollectionsScreen();
+              break;
+            case '/admin-parents':
+              page = const AdminParentsScreen();
+              break;
+            case '/admin-report':
+              page = const AdminReportScreen();
+              break;
+            case '/home':
+            default:
+              page = const HomeScreen();
+              break;
+          }
 
-            return PageRouteBuilder(
-              settings: settings,
-              pageBuilder: (context, animation, secondaryAnimation) => page,
-              transitionDuration: Duration.zero,
-              reverseTransitionDuration: Duration.zero,
-            );
-          },
-        ),
+          return PageRouteBuilder(
+            settings: settings,
+            pageBuilder: (context, animation, secondaryAnimation) => page,
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          );
+        },
       ),
     );
   }
