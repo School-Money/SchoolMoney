@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:school_money/feature/collections/model/collectionDetails/collection_details.dart';
 import 'package:school_money/feature/collections/model/create_collections_payload.dart';
 import 'package:school_money/feature/collections/model/payment/payment_details.dart';
+import 'package:school_money/screens/main/home_screen.dart';
 import '../../auth/auth_service.dart';
 import 'model/collection.dart';
 
@@ -106,6 +107,31 @@ class CollectionsService {
       if (e.response != null) {
         throw Exception(
             'Error deleting payment: ${e.response?.data['message'] ?? e.response?.statusCode}');
+      } else {
+        throw Exception('Server connection error: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  Future<List<ParentTransaction>> getParentTransactions() async {
+    try {
+      final response = await _authService.authenticatedDio.get(
+        '$_baseUrl/payments',
+      );
+
+      if (response.data is! List) {
+        throw Exception('Invalid data format');
+      }
+
+      return (response.data as List)
+          .map((transactionData) => ParentTransaction.fromJson(transactionData))
+          .toList();
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(
+            'Error fetching parent transactions: ${e.response?.statusCode}');
       } else {
         throw Exception('Server connection error: ${e.message}');
       }

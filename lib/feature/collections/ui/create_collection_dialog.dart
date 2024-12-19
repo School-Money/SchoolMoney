@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/feature/collections/collections_provider.dart';
 import 'package:school_money/feature/collections/collections_service.dart';
 import 'package:school_money/feature/collections/model/create_collections_payload.dart';
 import 'package:school_money/feature/collections/ui/custom_date_picker.dart';
-import 'package:school_money/feature/collections/ui/custom_textfield';
+import 'package:school_money/feature/collections/ui/custom_textfield.dart';
 import '../../../constants/app_colors.dart';
 
 class CreateCollectionDialog extends StatefulWidget {
@@ -250,31 +251,30 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(
-            'Cancel',
-            style: TextStyle(color: AppColors.secondary),
+        SizedBox(
+          width: 100,
+          child: AuthButton(
+            onPressed: () => Navigator.pop(context),
+            text: 'Cancel',
+            variant: ButtonVariant.alternative,
           ),
         ),
-        ElevatedButton(
-          onPressed: _isCreating ? null : _createCollection,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+        const SizedBox(width: 4),
+        if (_isCreating)
+          const SizedBox(
+            width: 100,
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(Colors.white),
+            ),
           ),
-          child: _isCreating
-              ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(Colors.white),
-                  ),
-                )
-              : const Text(
-                  'Create',
-                  style: TextStyle(color: Colors.white),
-                ),
-        ),
+        if (!_isCreating)
+          SizedBox(
+            width: 100,
+            child: AuthButton(
+              onPressed: _createCollection,
+              text: 'Create',
+            ),
+          ),
       ],
     );
   }

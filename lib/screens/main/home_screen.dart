@@ -40,19 +40,139 @@ class SchoolTrip {
 }
 
 class ParentTransaction {
-  final String imageUrl;
-  final String firstName;
-  final String lastName;
-  final String transactionName;
+  final String id;
+  final TransactionCollection collection;
+  final Parent parent;
   final double amount;
+  final String description;
+  final String createdAt;
 
   ParentTransaction({
-    required this.imageUrl,
+    required this.id,
+    required this.collection,
+    required this.parent,
+    required this.amount,
+    required this.description,
+    required this.createdAt,
+  });
+
+  factory ParentTransaction.fromJson(Map<String, dynamic> json) {
+    return ParentTransaction(
+      id: json['_id'] as String,
+      collection: TransactionCollection.fromJson(json['collection']),
+      parent: Parent.fromJson(json['parent']),
+      amount: json['amount'] as double,
+      description: json['description'] as String,
+      createdAt: json['createdAt'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'collection': collection.toJson(),
+      'parent': parent.toJson(),
+      'amount': amount,
+      'description': description,
+      'createdAt': createdAt,
+    };
+  }
+}
+
+class TransactionCollection {
+  final String id;
+  final String classId;
+  final String creator;
+  final String title;
+  final String description;
+  final String? logo;
+  final String startDate;
+  final String endDate;
+  final double targetAmount;
+  final bool isBlocked;
+
+  TransactionCollection({
+    required this.id,
+    required this.classId,
+    required this.creator,
+    required this.title,
+    required this.description,
+    this.logo,
+    required this.startDate,
+    required this.endDate,
+    required this.targetAmount,
+    required this.isBlocked,
+  });
+
+  factory TransactionCollection.fromJson(Map<String, dynamic> json) {
+    return TransactionCollection(
+      id: json['_id'] as String,
+      classId: json['class'] as String,
+      creator: json['creator'] as String,
+      title: json['title'] as String,
+      description: json['description'] as String,
+      logo: json['logo'] as String?,
+      startDate: json['startDate'] as String,
+      endDate: json['endDate'] as String,
+      targetAmount: json['targetAmount'] as double,
+      isBlocked: json['isBlocked'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'class': classId,
+      'creator': creator,
+      'title': title,
+      'description': description,
+      'logo': logo,
+      'startDate': startDate,
+      'endDate': endDate,
+      'targetAmount': targetAmount,
+      'isBlocked': isBlocked,
+    };
+  }
+}
+
+class Parent {
+  final String id;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String? avatar;
+  final String createdAt;
+
+  Parent({
+    required this.id,
     required this.firstName,
     required this.lastName,
-    required this.transactionName,
-    required this.amount,
+    required this.email,
+    this.avatar,
+    required this.createdAt,
   });
+
+  factory Parent.fromJson(Map<String, dynamic> json) {
+    return Parent(
+      id: json['_id'] as String,
+      firstName: json['firstName'] as String,
+      lastName: json['lastName'] as String,
+      email: json['email'] as String,
+      avatar: json['avatar'] as String?,
+      createdAt: json['createdAt'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'avatar': avatar,
+      'createdAt': createdAt,
+    };
+  }
 }
 
 class HomeScreen extends StatefulWidget {
@@ -63,10 +183,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _isLoadingParentTransactions = true;
-
-  List<ParentTransaction> _parentTransactions = [];
-
   @override
   void initState() {
     super.initState();
@@ -78,6 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _loadData() async {
     context.read<ChildrenProvider>().fetchChildren();
     context.read<CollectionsProvider>().getCollections();
+    context.read<CollectionsProvider>().getParentTransactions();
   }
 
   @override
@@ -123,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Open collections',
+              'Collections',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -133,7 +250,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 16),
             SizedBox(
               height: 340,
-              child: collectionsProvider.isLoading
+              child: collectionsProvider.isLoading &&
+                      collectionsProvider.collections.isEmpty
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
                       clipBehavior: Clip.none,
@@ -151,6 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             daysLeft: collection.endDate
                                 .difference(DateTime.now())
                                 .inDays,
+                            isBlocked: collection.isBlocked,
                             currentAmount: collection.currentAmount,
                             targetAmount: collection.targetAmount,
                             onTap: () {
@@ -176,19 +295,21 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 16),
             SizedBox(
               height: 200,
-              child: _isLoadingParentTransactions
+              child: collectionsProvider.isLoading &&
+                      collectionsProvider.parentTransactions.isEmpty
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
                       clipBehavior: Clip.none,
                       scrollDirection: Axis.horizontal,
-                      itemCount: _parentTransactions.length,
+                      itemCount: collectionsProvider.parentTransactions.length,
                       itemBuilder: (context, index) {
-                        final transaction = _parentTransactions[index];
+                        final transaction =
+                            collectionsProvider.parentTransactions[index];
                         return ParentTransactionCard(
-                          imageUrl: transaction.imageUrl,
-                          firstName: transaction.firstName,
-                          lastName: transaction.lastName,
-                          transactionName: transaction.transactionName,
+                          imageUrl: transaction.collection.logo ?? '',
+                          firstName: transaction.parent.firstName,
+                          lastName: transaction.parent.lastName,
+                          transactionName: transaction.collection.title,
                           amount: transaction.amount,
                           onTap: () {},
                         );
@@ -201,78 +322,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-final parentTransactions = [
-  ParentTransaction(
-    imageUrl:
-        'https://fastly.picsum.photos/id/791/5000/3333.jpg?hmac=cPzd2JG5KPMTn-WdscexEPbtbi5aISCGHKWkIlx5-eE',
-    firstName: 'Tomasz',
-    lastName: 'Adamek',
-    transactionName: 'New desks',
-    amount: -50,
-  ),
-  ParentTransaction(
-    imageUrl:
-        'https://fastly.picsum.photos/id/791/5000/3333.jpg?hmac=cPzd2JG5KPMTn-WdscexEPbtbi5aISCGHKWkIlx5-eE',
-    firstName: 'Mariusz',
-    lastName: 'Pudzianowski',
-    transactionName: 'Football tournament',
-    amount: 100,
-  ),
-  ParentTransaction(
-    imageUrl:
-        'https://fastly.picsum.photos/id/791/5000/3333.jpg?hmac=cPzd2JG5KPMTn-WdscexEPbtbi5aISCGHKWkIlx5-eE',
-    firstName: 'Michał',
-    lastName: 'Orliński',
-    transactionName: 'Trip to cinema',
-    amount: -25,
-  ),
-  ParentTransaction(
-    imageUrl:
-        'https://fastly.picsum.photos/id/791/5000/3333.jpg?hmac=cPzd2JG5KPMTn-WdscexEPbtbi5aISCGHKWkIlx5-eE',
-    firstName: 'Anna',
-    lastName: 'Kowalska',
-    transactionName: 'Swimming lessons',
-    amount: 75,
-  ),
-  ParentTransaction(
-    imageUrl:
-        'https://fastly.picsum.photos/id/791/5000/3333.jpg?hmac=cPzd2JG5KPMTn-WdscexEPbtbi5aISCGHKWkIlx5-eE',
-    firstName: 'Piotr',
-    lastName: 'Nowicki',
-    transactionName: 'Art supplies',
-    amount: -30,
-  ),
-  ParentTransaction(
-    imageUrl:
-        'https://fastly.picsum.photos/id/791/5000/3333.jpg?hmac=cPzd2JG5KPMTn-WdscexEPbtbi5aISCGHKWkIlx5-eE',
-    firstName: 'Barbara',
-    lastName: 'Wojcik',
-    transactionName: 'Theater tickets',
-    amount: 120,
-  ),
-  ParentTransaction(
-    imageUrl:
-        'https://fastly.picsum.photos/id/791/5000/3333.jpg?hmac=cPzd2JG5KPMTn-WdscexEPbtbi5aISCGHKWkIlx5-eE',
-    firstName: 'Krzysztof',
-    lastName: 'Zieliński',
-    transactionName: 'Zoo excursion',
-    amount: -45,
-  ),
-  ParentTransaction(
-    imageUrl:
-        'https://fastly.picsum.photos/id/791/5000/3333.jpg?hmac=cPzd2JG5KPMTn-WdscexEPbtbi5aISCGHKWkIlx5-eE',
-    firstName: 'Monika',
-    lastName: 'Lewandowska',
-    transactionName: 'Science fair',
-    amount: 60,
-  ),
-  ParentTransaction(
-    imageUrl:
-        'https://fastly.picsum.photos/id/791/5000/3333.jpg?hmac=cPzd2JG5KPMTn-WdscexEPbtbi5aISCGHKWkIlx5-eE',
-    firstName: 'Adam',
-    lastName: 'Malinowski',
-    transactionName: 'Museum entry',
-    amount: -35,
-  ),
-];

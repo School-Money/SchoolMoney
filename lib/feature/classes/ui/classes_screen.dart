@@ -105,7 +105,7 @@ class ClassesScreenState extends State<ClassesScreen> {
                     child: Text(
                       'Create class',
                       style: TextStyle(
-                        color: AppColors.secondary,
+                        color: AppColors.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

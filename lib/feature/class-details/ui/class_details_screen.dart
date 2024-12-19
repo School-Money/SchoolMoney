@@ -105,12 +105,13 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
         title: Text(_classDetails?.className ?? ''),
         backgroundColor: AppColors.gray,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              _showCreateCollectionDialog();
-            },
-          ),
+          if (_classDetails?.isTreasurer == true)
+            IconButton(
+              icon: Icon(Icons.add, color: AppColors.primary),
+              onPressed: () {
+                _showCreateCollectionDialog();
+              },
+            ),
         ],
       ),
       body: SingleChildScrollView(
@@ -174,7 +175,7 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Active collections',
+                  'Collections',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -201,6 +202,7 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
                             daysLeft: collection.endDate
                                 .difference(DateTime.now())
                                 .inDays,
+                            isBlocked: collection.isBlocked,
                             currentAmount: collection.currentAmount,
                             targetAmount: collection.targetAmount,
                             onTap: () {

@@ -7,6 +7,7 @@ class CollectionCard extends StatelessWidget {
   final String title;
   final String className;
   final int daysLeft;
+  final bool isBlocked;
   final double currentAmount;
   final double targetAmount;
   final VoidCallback onTap;
@@ -20,6 +21,7 @@ class CollectionCard extends StatelessWidget {
     required this.currentAmount,
     required this.targetAmount,
     required this.onTap,
+    required this.isBlocked,
   });
 
   @override
@@ -75,7 +77,8 @@ class CollectionCard extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.secondary,
+                      color:
+                          daysLeft >= 0 ? AppColors.secondary : AppColors.gray,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -88,7 +91,7 @@ class CollectionCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '$daysLeft days',
+                          daysLeft >= 0 ? '$daysLeft days' : 'Closed',
                           style: TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w500,

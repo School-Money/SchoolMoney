@@ -107,6 +107,7 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
                             currentAmount: collection.currentAmount,
                             targetAmount: collection.targetAmount,
                             logo: collection.logo,
+                            isBlocked: collection.isBlocked,
                             onTap: () {
                               Navigator.of(context).pushNamed(
                                 '/collection-details',

@@ -271,7 +271,8 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                                     ? NetworkImage(collection.creator.avatar!)
                                     : null,
                                 child: collection.creator.avatar == null
-                                    ? Icon(Icons.person, color: AppColors.secondary)
+                                    ? Icon(Icons.person,
+                                        color: AppColors.secondary)
                                     : null,
                               ),
                               const SizedBox(height: 4),
@@ -285,97 +286,103 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                               ),
                             ],
                           ),
-                          Column(
-                            children: [
-                              ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 200),
-                                child: AuthButton(
-                                  text: 'Pay',
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          PaymentCollectionDialog(
-                                        children: collection.children,
-                                        collectionId: collection.id,
-                                        onPay: (paymentDetails) async {
-                                          try {
-                                            await context
-                                                .read<CollectionsProvider>()
-                                                .createAPayment(paymentDetails);
-
-                                            if (context.mounted) {
+                          if (!collection.isBlocked &&
+                              collection.endDate.isAfter(DateTime.now()))
+                            Column(
+                              children: [
+                                ConstrainedBox(
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 200),
+                                  child: AuthButton(
+                                    text: 'Pay',
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            PaymentCollectionDialog(
+                                          children: collection.children,
+                                          collectionId: collection.id,
+                                          onPay: (paymentDetails) async {
+                                            try {
                                               await context
                                                   .read<CollectionsProvider>()
-                                                  .getCollectionDetails(
-                                                      widget.collectionId);
-                                            }
-                                          } catch (e) {
-                                            if (context.mounted) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(e.toString()),
-                                                  backgroundColor:
-                                                      AppColors.red,
-                                                ),
-                                              );
-                                            }
-                                          } finally {
-                                            Navigator.of(context).pop();
-                                          }
-                                        },
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              if (collection.creator.id == _userId)
-                              ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 200),
-                                child: AuthButton(
-                                  text: 'Withdraw',
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          CreatorPaymentCollectionDialog(
-                                        children: collection.children,
-                                        collectionId: collection.id,
-                                        onPay: (paymentDetails) async {
-                                          try {
-                                            await context
-                                                .read<CollectionsProvider>()
-                                                .createAPayment(paymentDetails);
+                                                  .createAPayment(
+                                                      paymentDetails);
 
-                                            if (context.mounted) {
-                                              await context
-                                                .read<CollectionsProvider>()
-                                                .getCollectionDetails(
-                                                    widget.collectionId);
+                                              if (context.mounted) {
+                                                await context
+                                                    .read<CollectionsProvider>()
+                                                    .getCollectionDetails(
+                                                        widget.collectionId);
+                                              }
+                                            } catch (e) {
+                                              if (context.mounted) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(e.toString()),
+                                                    backgroundColor:
+                                                        AppColors.red,
+                                                  ),
+                                                );
+                                              }
+                                            } finally {
+                                              Navigator.of(context).pop();
                                             }
-                                          } catch (e) {
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              SnackBar(
-                                                content: Text(e.toString()),
-                                                backgroundColor: AppColors.red,
-                                              ),
-                                            );
-                                          } finally {
-                                            Navigator.of(context).pop();
-                                          }
-                                        },
-                                      ),
-                                    );
-                                  },
+                                          },
+                                        ),
+                                      );
+                                    },
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                                const SizedBox(height: 16),
+                                if (collection.creator.id == _userId)
+                                  ConstrainedBox(
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 200),
+                                    child: AuthButton(
+                                      text: 'Withdraw',
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              CreatorPaymentCollectionDialog(
+                                            children: collection.children,
+                                            collectionId: collection.id,
+                                            onPay: (paymentDetails) async {
+                                              try {
+                                                await context
+                                                    .read<CollectionsProvider>()
+                                                    .createAPayment(
+                                                        paymentDetails);
+
+                                                if (context.mounted) {
+                                                  await context
+                                                      .read<
+                                                          CollectionsProvider>()
+                                                      .getCollectionDetails(
+                                                          widget.collectionId);
+                                                }
+                                              } catch (e) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(e.toString()),
+                                                    backgroundColor:
+                                                        AppColors.red,
+                                                  ),
+                                                );
+                                              } finally {
+                                                Navigator.of(context).pop();
+                                              }
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                              ],
+                            ),
                         ],
                       ),
                     ],
@@ -415,7 +422,10 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                             const SizedBox(height: 8),
                         itemBuilder: (context, index) {
                           final payment = collection.payments[index];
-                          return _buildPaymentTile(payment);
+                          return _buildPaymentTile(
+                              payment,
+                              collection.isBlocked ||
+                                  collection.endDate.isBefore(DateTime.now()));
                         },
                       ),
                     ),
@@ -429,7 +439,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
     );
   }
 
-  Widget _buildPaymentTile(Payment payment) {
+  Widget _buildPaymentTile(Payment payment, bool isClosed) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -536,34 +546,34 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          if (payment.withdrawable)
-          SizedBox(
-            height: 40,
-            width: 100,
-            child: AuthButton(
-              text: 'Withdraw',
-              onPressed: () async {
-                try {
-                  await context
-                      .read<CollectionsProvider>()
-                      .withdrawPayment(payment.id);
-
-                  if (mounted) {
+          if (payment.withdrawable && !isClosed)
+            SizedBox(
+              height: 40,
+              width: 100,
+              child: AuthButton(
+                text: 'Withdraw',
+                onPressed: () async {
+                  try {
                     await context
-                      .read<CollectionsProvider>()
-                      .getCollectionDetails(widget.collectionId);
+                        .read<CollectionsProvider>()
+                        .withdrawPayment(payment.id);
+
+                    if (mounted) {
+                      await context
+                          .read<CollectionsProvider>()
+                          .getCollectionDetails(widget.collectionId);
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                        backgroundColor: AppColors.red,
+                      ),
+                    );
                   }
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(e.toString()),
-                      backgroundColor: AppColors.red,
-                    ),
-                  );
-                }
-              },
+                },
+              ),
             ),
-          ),
         ],
       ),
     );
