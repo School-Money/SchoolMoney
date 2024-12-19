@@ -153,7 +153,7 @@ class _EditChildDialogState extends State<EditChildDialog> {
               AuthTextField(
                 controller: _inviteCodeController,
                 hintText: 'Invite Code',
-                prefixIcon: Icons.code,
+                prefixIcon: Icons.group_add,
               ),
               const SizedBox(height: 16),
               AuthTextField(

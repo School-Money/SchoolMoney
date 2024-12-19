@@ -44,7 +44,7 @@ class _AddChildDialogState extends State<AddChildDialog> {
               AuthTextField(
                 controller: _inviteCodeController,
                 hintText: 'Invite Code',
-                prefixIcon: Icons.code,
+                prefixIcon: Icons.group_add,
               ),
               const SizedBox(height: 16),
               AuthTextField(

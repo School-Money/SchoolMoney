@@ -90,56 +90,6 @@ class ClassCard extends StatelessWidget {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          if (classDetails.isTreasurer) ...[
-                            const SizedBox(height: 8),
-                            GestureDetector(
-                              onTap: () async {
-                                final inviteCode = await context
-                                    .read<ClassesProvider>()
-                                    .getInviteCode(classDetails.id);
-                                if (context.mounted) {
-                                  if (inviteCode == null) {
-                                    ScaffoldMessenger.of(context)
-                                        .clearSnackBars();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: const Text(
-                                            'Failed to get invite code'),
-                                        backgroundColor:
-                                            AppColors.red.withOpacity(0.5),
-                                      ),
-                                    );
-                                    return;
-                                  } else {
-                                    Clipboard.setData(
-                                      ClipboardData(text: inviteCode),
-                                    );
-                                    ScaffoldMessenger.of(context)
-                                        .clearSnackBars();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content:
-                                            const Text('Invite code copied'),
-                                        backgroundColor:
-                                            AppColors.green.withOpacity(0.5),
-                                      ),
-                                    );
-                                  }
-                                }
-                              },
-                              child: MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: Text(
-                                  'Get invite code',
-                                  style: TextStyle(
-                                    color: AppColors.accent,
-                                    fontSize: 14,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
                         ],
                       ),
                     ),
@@ -161,6 +111,43 @@ class ClassCard extends StatelessWidget {
                             color: AppColors.accent,
                           ),
                         ),
+                        if (classDetails.isTreasurer) ...[
+                          const SizedBox(height: 8),
+                          IconButton(
+                            icon: Icon(Icons.share, color: AppColors.accent),
+                            onPressed: () async {
+                              try {
+                                await Clipboard.setData(
+                                    ClipboardData(text: classDetails.id));
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context)
+                                      .clearSnackBars();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
+                                          'Invite code copied to clipboard'),
+                                      backgroundColor:
+                                          Colors.green.withOpacity(0.5),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context)
+                                      .clearSnackBars();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
+                                          'Failed to copy the invite code'),
+                                      backgroundColor:
+                                          Colors.red.withOpacity(0.5),
+                                    ),
+                                  );
+                                }
+                              }
+                            },
+                          ),
+                        ],
                       ],
                     ),
                   ],
@@ -184,23 +171,6 @@ class ClassCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (classDetails.isTreasurer) ...[
-                        const SizedBox(width: 16),
-                        SizedBox(
-                          height: 36,
-                          width: 120,
-                          child: AuthButton(
-                            text: 'Edit class',
-                            onPressed: onEditClassClicked,
-                            variant: ButtonVariant.alternative,
-                            customTextStyle: TextStyle(
-                              color: AppColors.secondary,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
                       const SizedBox(width: 16),
                       SizedBox(
                         height: 36,

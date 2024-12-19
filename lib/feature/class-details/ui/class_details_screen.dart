@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:school_money/components/chat/chat_dialog.dart';
 import 'package:school_money/feature/classes/model/user_details.dart';
@@ -106,11 +107,36 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
         backgroundColor: AppColors.gray,
         actions: [
           if (_classDetails?.isTreasurer == true)
-            IconButton(
-              icon: Icon(Icons.add, color: AppColors.primary),
-              onPressed: () {
-                _showCreateCollectionDialog();
-              },
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: IconButton(
+                icon: Icon(Icons.share, color: AppColors.primary),
+                onPressed: () async {
+                  try {
+                    await Clipboard.setData(
+                        ClipboardData(text: _classDetails!.id));
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Invite code copied to clipboard'),
+                          backgroundColor: Colors.green.withOpacity(0.5),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text('Failed to copy the invite code'),
+                          backgroundColor: Colors.red.withOpacity(0.5),
+                        ),
+                      );
+                    }
+                  }
+                },
+              ),
             ),
         ],
       ),
@@ -174,15 +200,30 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                Text(
-                  'Collections',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.secondary,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'Collections',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.secondary,
+                      ),
+                    ),
+                    if (_classDetails?.isTreasurer == true)
+                      Row(
+                        children: [
+                          const SizedBox(width: 4),
+                          IconButton(
+                            icon: Icon(Icons.add, color: AppColors.accent),
+                            onPressed: () {
+                              _showCreateCollectionDialog();
+                            },
+                          ),
+                        ],
+                      ),
+                  ],
                 ),
-                const SizedBox(height: 16),
                 SizedBox(
                   height: 350,
                   child: ListView.builder(
