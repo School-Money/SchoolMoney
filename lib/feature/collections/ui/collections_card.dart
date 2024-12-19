@@ -100,8 +100,9 @@ class CollectionCard extends StatelessWidget {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color:
-                          daysLeft >= 0 ? AppColors.secondary : AppColors.gray,
+                      color: daysLeft >= 0 && !isBlocked
+                          ? AppColors.secondary
+                          : AppColors.gray,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -114,7 +115,9 @@ class CollectionCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          daysLeft >= 0 ? '$daysLeft days' : 'Closed',
+                          daysLeft >= 0 && !isBlocked
+                              ? '$daysLeft days'
+                              : 'Closed',
                           style: TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.w500,
