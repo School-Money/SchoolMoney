@@ -128,16 +128,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                   type: TextFieldVariant.password,
                                 ),
                                 const SizedBox(height: 4),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: TextButton(
-                                    style: TextButton.styleFrom(
-                                      foregroundColor: AppColors.accent,
-                                    ),
-                                    onPressed: () {},
-                                    child: const Text('Forgot password?'),
-                                  ),
-                                ),
                                 const SizedBox(height: 32),
                                 AuthButton(
                                   text: 'Sign in',
