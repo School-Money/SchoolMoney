@@ -46,8 +46,6 @@ class CollectionsService {
         '$_baseUrl/collections/$collectionId',
       );
 
-      print('response: $response');
-
       return CollectionDetails.fromJson(response.data);
     } on DioException catch (e) {
       if (e.response != null) {

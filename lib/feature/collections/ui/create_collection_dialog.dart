@@ -83,68 +83,74 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
   }
 
   Future<void> _createCollection() async {
-    if (_isCreating) {
-      return;
-    }
+    if (_isCreating) return;
+
     setState(() {
       _isCreating = true;
     });
-    if (_formKey.currentState!.validate()) {
-      if (startDateNotifier.value == null || endDateNotifier.value == null) {
+
+    if (!_formKey.currentState!.validate()) {
+      setState(() {
+        _isCreating = false;
+      });
+      return;
+    }
+
+    if (startDateNotifier.value == null || endDateNotifier.value == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select start and end dates'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      setState(() {
+        _isCreating = false;
+      });
+      return;
+    }
+
+    try {
+      final collectionDetails = CreateCollectionPayload(
+        title: _nameController.text,
+        description: _descriptionController.text,
+        classId: widget.classId,
+        startDate: startDateNotifier.value!.millisecondsSinceEpoch ~/ 1000,
+        endDate: endDateNotifier.value!.millisecondsSinceEpoch ~/ 1000,
+        targetAmount: double.parse(_targetAmountController.text),
+        logo: imagePathNotifier.value,
+      );
+
+      await context
+          .read<CollectionsProvider>()
+          .createCollection(collectionDetails);
+
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Please select start and end dates'),
+            content: Text('Collection created successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        Navigator.of(context).pop();
+        await context.read<CollectionsProvider>().getCollections();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to create collection: $e'),
             backgroundColor: Colors.red,
           ),
         );
-        return;
       }
-
-      try {
-        final collectionDetails = CreateCollectionPayload(
-          title: _nameController.text,
-          description: _descriptionController.text,
-          classId: widget.classId,
-          startDate: startDateNotifier.value!.millisecondsSinceEpoch ~/ 1000,
-          endDate: endDateNotifier.value!.millisecondsSinceEpoch ~/ 1000,
-          targetAmount: double.parse(_targetAmountController.text),
-          logo: imagePathNotifier.value,
-        );
-
-        final collectionsService = CollectionsService();
-
-        await collectionsService.createCollection(collectionDetails);
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Collection created successfully'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-        if (mounted) {
-          await context.read<CollectionsProvider>().getCollections();
-        }
-      } catch (e) {
-        if (mounted) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to create collection: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } finally {
-        if (mounted) {
-          Navigator.of(context).pop();
-        }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isCreating = false;
+        });
       }
     }
-    setState(() {
-      _isCreating = false;
-    });
   }
 
   @override

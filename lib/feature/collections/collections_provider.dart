@@ -51,7 +51,7 @@ class CollectionsProvider extends ChangeNotifier {
       await _collectionService.createCollection(payload);
       notifyListeners();
     } catch (e) {
-      // nothing
+      rethrow;
     }
     return;
   }
