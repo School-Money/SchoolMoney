@@ -22,10 +22,12 @@ class CreatorPaymentCollectionDialog extends StatefulWidget {
   });
 
   @override
-  State<CreatorPaymentCollectionDialog> createState() => _CreatorPaymentCollectionDialogState();
+  State<CreatorPaymentCollectionDialog> createState() =>
+      _CreatorPaymentCollectionDialogState();
 }
 
-class _CreatorPaymentCollectionDialogState extends State<CreatorPaymentCollectionDialog> {
+class _CreatorPaymentCollectionDialogState
+    extends State<CreatorPaymentCollectionDialog> {
   final _formKey = GlobalKey<FormState>();
   final _amountController = TextEditingController();
   String? _errorMessage;
@@ -47,124 +49,112 @@ class _CreatorPaymentCollectionDialogState extends State<CreatorPaymentCollectio
   @override
   Widget build(BuildContext context) {
     final collectionsProvider = context.watch<CollectionsProvider>();
-    
+
     return collectionsProvider.isLoading
-      ? Container()
-      :
-    Dialog(
-      backgroundColor: AppColors.primary,
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        constraints: const BoxConstraints(maxWidth: 400),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Make Payment',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.secondary,
-                ),
-              ),
-              const SizedBox(height: 24),
-              if (_errorMessage != null) ...[
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.red.shade200),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.error_outline, color: Colors.red.shade700, size: 20),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          _errorMessage!,
-                          style: TextStyle(
-                            color: Colors.red.shade700,
-                            fontSize: 14,
-                          ),
+        ? Container()
+        : Dialog(
+            backgroundColor: AppColors.primary,
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              constraints: const BoxConstraints(maxWidth: 400),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Make Payment',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.secondary,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    if (_errorMessage != null) ...[
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.red.shade200),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.error_outline,
+                                color: Colors.red.shade700, size: 20),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                _errorMessage!,
+                                style: TextStyle(
+                                  color: Colors.red.shade700,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.close,
+                                  color: Colors.red.shade700, size: 20),
+                              onPressed: _clearErrorMessage,
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                            ),
+                          ],
                         ),
                       ),
-                      IconButton(
-                        icon: Icon(Icons.close, color: Colors.red.shade700, size: 20),
-                        onPressed: _clearErrorMessage,
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      ),
+                      const SizedBox(height: 16),
                     ],
-                  ),
+                    AuthTextField(
+                      controller: _amountController,
+                      hintText: 'Amount',
+                      prefixIcon: Icons.attach_money,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d*\.?\d{0,2}')),
+                      ],
+                      onChanged: (_) => _clearErrorMessage(),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: AuthButton(
+                            text: 'Cancel',
+                            onPressed: () => Navigator.of(context).pop(),
+                            variant: ButtonVariant.alternative,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: AuthButton(
+                            text: 'Withdraw',
+                            onPressed: () {
+                              if (_formKey.currentState?.validate() ?? false) {
+                                if (_amountController.text.isEmpty) {
+                                  _showErrorMessage('Please enter an amount');
+                                  return;
+                                }
+
+                                final paymentDetails = PaymentDetails(
+                                  collectionId: widget.collectionId,
+                                  childId: null,
+                                  amount: -double.parse(_amountController.text),
+                                );
+                                widget.onPay(paymentDetails);
+                              }
+                            },
+                            variant: ButtonVariant.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-              ],
-              AuthTextField(
-                controller: _amountController,
-                hintText: 'Amount',
-                prefixIcon: Icons.attach_money,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  TextInputFormatter.withFunction((oldValue, newValue) {
-                    if (newValue.text.isEmpty) {
-                      return newValue;
-                    }
-                    
-                    final int value = int.parse(newValue.text);
-                    final formatter = NumberFormat('#,###');
-                    final newString = formatter.format(value);
-                    
-                    return TextEditingValue(
-                      text: newString,
-                      selection: TextSelection.collapsed(offset: newString.length),
-                    );
-                  }),
-                ],
-                onChanged: (_) => _clearErrorMessage(),
               ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: AuthButton(
-                      text: 'Cancel',
-                      onPressed: () => Navigator.of(context).pop(),
-                      variant: ButtonVariant.alternative,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: AuthButton(
-                      text: 'Withdraw',
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          if (_amountController.text.isEmpty) {
-                            _showErrorMessage('Please enter an amount');
-                            return;
-                          }
-                          
-                          final paymentDetails = PaymentDetails(
-                            collectionId: widget.collectionId,
-                            childId: null,
-                            amount: -double.parse(_amountController.text),
-                          );
-                          widget.onPay(paymentDetails);
-                        }
-                      },
-                      variant: ButtonVariant.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+            ),
+          );
   }
 }

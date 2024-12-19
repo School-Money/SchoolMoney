@@ -45,22 +45,7 @@ class _UpdateBalanceDialogState extends State<UpdateBalanceDialog> {
                 hintText: 'Amount',
                 prefixIcon: Icons.monetization_on,
                 inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  TextInputFormatter.withFunction((oldValue, newValue) {
-                    if (newValue.text.isEmpty) {
-                      return newValue;
-                    }
-
-                    final int value = int.parse(newValue.text);
-                    final formatter = NumberFormat('#,###');
-                    final newString = formatter.format(value);
-
-                    return TextEditingValue(
-                      text: newString,
-                      selection:
-                          TextSelection.collapsed(offset: newString.length),
-                    );
-                  }),
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                 ],
               ),
               const SizedBox(height: 24),
