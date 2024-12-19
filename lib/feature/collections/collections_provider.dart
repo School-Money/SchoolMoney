@@ -38,8 +38,6 @@ class CollectionsProvider extends ChangeNotifier {
 
     try {
       await _collectionService.updateCollection(payload);
-    } catch (e) {
-      // hehe (~Michael Jackson)
     } finally {
       _isLoading = false;
       notifyListeners();

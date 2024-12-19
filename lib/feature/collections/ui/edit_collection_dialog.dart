@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:school_money/admin/model/collection.dart';
 import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/feature/collections/collections_provider.dart';
-import 'package:school_money/feature/collections/collections_service.dart';
-import 'package:school_money/feature/collections/model/create_collections_payload.dart';
+import 'package:school_money/feature/collections/model/collectionDetails/collection_details.dart';
+import 'package:school_money/feature/collections/model/edit_collection_payload.dart';
 import 'package:school_money/feature/collections/ui/custom_date_picker.dart';
 import 'package:school_money/feature/collections/ui/custom_textfield.dart';
 import '../../../constants/app_colors.dart';
 
 class EditCollectionDialog extends StatefulWidget {
-  final Collection existingCollection;
+  final CollectionDetails existingCollection;
 
   const EditCollectionDialog({super.key, required this.existingCollection});
 
@@ -94,69 +93,74 @@ class _EditCollectionDialogState extends State<EditCollectionDialog> {
     }
   }
 
-  Future<void> _createCollection() async {
-    if (_isCreating) {
-      return;
-    }
+  Future<void> _editCollection() async {
+    if (_isCreating) return;
+
     setState(() {
       _isCreating = true;
     });
-    if (_formKey.currentState!.validate()) {
-      if (startDateNotifier.value == null || endDateNotifier.value == null) {
+
+    if (!_formKey.currentState!.validate()) {
+      setState(() {
+        _isCreating = false;
+      });
+      return;
+    }
+
+    if (startDateNotifier.value == null || endDateNotifier.value == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select start and end dates'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      setState(() {
+        _isCreating = false;
+      });
+      return;
+    }
+
+    try {
+      final collectionDetails = EditCollectionPayload(
+        id: widget.existingCollection.id,
+        title: _nameController.text,
+        description: _descriptionController.text,
+        startDate: startDateNotifier.value!.millisecondsSinceEpoch ~/ 1000,
+        endDate: endDateNotifier.value!.millisecondsSinceEpoch ~/ 1000,
+        targetAmount: double.parse(_targetAmountController.text),
+      );
+
+      await context
+          .read<CollectionsProvider>()
+          .updateCollectionDetails(collectionDetails);
+
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Please select start and end dates'),
+            content: Text('Collection updated successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        Navigator.of(context).pop();
+        await context.read<CollectionsProvider>().getCollections();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update collection: $e'),
             backgroundColor: Colors.red,
           ),
         );
-        return;
       }
-
-      try {
-        final collectionDetails = CreateCollectionPayload(
-          title: _nameController.text,
-          description: _descriptionController.text,
-          classId: widget.classId,
-          startDate: startDateNotifier.value!.millisecondsSinceEpoch ~/ 1000,
-          endDate: endDateNotifier.value!.millisecondsSinceEpoch ~/ 1000,
-          targetAmount: double.parse(_targetAmountController.text),
-          logo: imagePathNotifier.value,
-        );
-
-        final collectionsService = CollectionsService();
-
-        await collectionsService.createCollection(collectionDetails);
-
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Collection updated successfully'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-        if (mounted) {
-          await context.read<CollectionsProvider>().getCollections();
-        }
-      } catch (e) {
-        if (mounted) {
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to update collection: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } finally {
-        if (mounted) {
-          Navigator.of(context).pop();
-        }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isCreating = false;
+        });
       }
     }
-    setState(() {
-      _isCreating = false;
-    });
   }
 
   @override
@@ -171,7 +175,7 @@ class _EditCollectionDialogState extends State<EditCollectionDialog> {
         ),
       ),
       title: Text(
-        'New Collection',
+        'Edit Collection',
         style: TextStyle(
           color: AppColors.secondary,
           fontWeight: FontWeight.bold,
@@ -283,8 +287,8 @@ class _EditCollectionDialogState extends State<EditCollectionDialog> {
           SizedBox(
             width: 100,
             child: AuthButton(
-              onPressed: _createCollection,
-              text: 'Create',
+              onPressed: _editCollection,
+              text: 'Edit',
             ),
           ),
       ],

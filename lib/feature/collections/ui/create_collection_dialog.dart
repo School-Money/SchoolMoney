@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/feature/collections/collections_provider.dart';
-import 'package:school_money/feature/collections/collections_service.dart';
 import 'package:school_money/feature/collections/model/create_collections_payload.dart';
 import 'package:school_money/feature/collections/ui/custom_date_picker.dart';
 import 'package:school_money/feature/collections/ui/custom_textfield.dart';
