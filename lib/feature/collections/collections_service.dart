@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:school_money/feature/collections/model/collectionDetails/collection_details.dart';
 import 'package:school_money/feature/collections/model/create_collections_payload.dart';
+import 'package:school_money/feature/collections/model/edit_collection_payload.dart';
 import 'package:school_money/feature/collections/model/payment/payment_details.dart';
 import 'package:school_money/screens/main/home_screen.dart';
 import '../../auth/auth_service.dart';
@@ -63,6 +64,24 @@ class CollectionsService {
     try {
       await _authService.authenticatedDio.post(
         '$_baseUrl/collections',
+        data: payload.toJson(),
+      );
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(
+            'Error creating collection: ${e.response?.data['message'] ?? e.response?.statusCode}');
+      } else {
+        throw Exception('Server connection error: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  Future<void> updateCollection(EditCollectionPayload payload) async {
+    try {
+      await _authService.authenticatedDio.patch(
+        '$_baseUrl/collections/${payload.id}',
         data: payload.toJson(),
       );
     } on DioException catch (e) {

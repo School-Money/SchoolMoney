@@ -335,7 +335,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 16),
-                                if (collection.creator.id == _userId)
+                                if (collection.creator.id == _userId) ...[
                                   ConstrainedBox(
                                     constraints:
                                         const BoxConstraints(maxWidth: 200),
@@ -380,6 +380,22 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                                       },
                                     ),
                                   ),
+                                  const SizedBox(height: 16),
+                                  ConstrainedBox(
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 200),
+                                    child: AuthButton(
+                                      variant: ButtonVariant.alternative,
+                                      text: 'Edit',
+                                      onPressed: () async {
+                                        final result = showDialog(
+                                          context: context,
+                                          builder: (context) => EditCollectionDialog()
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                         ],
