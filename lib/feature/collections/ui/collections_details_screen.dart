@@ -449,7 +449,6 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
         children: [
           Row(
             children: [
-              // Parent Avatar and Name
               Expanded(
                 child: Row(
                   children: [
@@ -490,14 +489,13 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                 ),
               ),
 
-              // Cash Icon
               Icon(
                 Icons.monetization_on_outlined,
                 color: AppColors.accent,
                 size: 30,
               ),
 
-              // Child Avatar and Name
+              if (payment.child != null)
               Expanded(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -507,9 +505,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            payment.child != null
-                                ? '${payment.child!.firstName} ${payment.child!.lastName}'
-                                : 'Child',
+                            '${payment.child!.firstName} ${payment.child!.lastName}',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -535,6 +531,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
               ),
             ],
           ),
+          const SizedBox(height: 8),
           Text(
             payment.description,
             style: TextStyle(
