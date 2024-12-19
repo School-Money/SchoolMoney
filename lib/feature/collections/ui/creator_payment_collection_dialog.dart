@@ -108,7 +108,7 @@ class _CreatorPaymentCollectionDialogState
                     ],
                     AuthTextField(
                       controller: _amountController,
-                      hintText: 'Amount',
+                      hintText: 'Amount in zł',
                       prefixIcon: Icons.attach_money,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(

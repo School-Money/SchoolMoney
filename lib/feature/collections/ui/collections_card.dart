@@ -31,7 +31,7 @@ class CollectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = (currentAmount / targetAmount).clamp(0.0, 1.0);
+    final progress = (currentAmount / targetAmount);
     final progressPercent = (progress * 100).round();
 
     return Card(
@@ -158,7 +158,7 @@ class CollectionCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '${currentAmount.toInt()} zł',
+                        '${currentAmount.toStringAsFixed(2)} zł',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -166,7 +166,7 @@ class CollectionCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        ' z ${targetAmount.toInt()} zł',
+                        ' out of ${targetAmount.toStringAsFixed(2)} zł',
                         style: TextStyle(
                           fontSize: 18,
                           color: AppColors.gray,
@@ -185,7 +185,7 @@ class CollectionCard extends StatelessWidget {
                         ),
                       ),
                       FractionallySizedBox(
-                        widthFactor: progress,
+                        widthFactor: progress.clamp(0, 1),
                         child: Container(
                           height: 8,
                           decoration: BoxDecoration(
@@ -211,7 +211,7 @@ class CollectionCard extends StatelessWidget {
                     )
                   else
                     FractionallySizedBox(
-                      widthFactor: progress,
+                      widthFactor: progress.clamp(0, 1),
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Text(

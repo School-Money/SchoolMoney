@@ -62,7 +62,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _emailController.text = profileProvider.profile!.email;
           _firstNameController.text = profileProvider.profile!.firstName;
           _lastNameController.text = profileProvider.profile!.lastName;
-          _balanceController.text = profileProvider.profile!.balance.toString();
+          _balanceController.text =
+              '${profileProvider.profile!.balance.toStringAsFixed(2)} zł';
         }
 
         return Container(
@@ -122,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: AuthTextField(
                             controller: _balanceController,
                             hintText: 'Balance',
-                            prefixIcon: Icons.monetization_on,
+                            prefixIcon: Icons.attach_money,
                             enabled: false,
                             backgroundColor: AppColors.accent.withOpacity(0.3),
                           ),

@@ -143,7 +143,7 @@ class _PaymentCollectionDialogState extends State<PaymentCollectionDialog> {
                     const SizedBox(height: 16),
                     AuthTextField(
                       controller: _amountController,
-                      hintText: 'Amount',
+                      hintText: 'Amount in zł',
                       prefixIcon: Icons.attach_money,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(

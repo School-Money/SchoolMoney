@@ -217,7 +217,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
                 const SizedBox(height: 16),
                 CustomTextField(
                   controller: _targetAmountController,
-                  hintText: 'Target Amount',
+                  hintText: 'Target Amount in zł',
                   prefixIcon: Icons.monetization_on,
                   prefixText: '\$ ',
                   keyboardType: TextInputType.numberWithOptions(decimal: true),

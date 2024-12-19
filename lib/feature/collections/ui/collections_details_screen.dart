@@ -70,8 +70,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
       );
     }
 
-    final progress =
-        (collection.currentAmount / collection.targetAmount).clamp(0.0, 1.0);
+    final progress = (collection.currentAmount / collection.targetAmount);
     final progressPercent = (progress * 100).round();
 
     return Scaffold(
@@ -181,7 +180,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                       Row(
                         children: [
                           Text(
-                            '${collection.currentAmount.toInt()} zł',
+                            '${collection.currentAmount.toStringAsFixed(2)} zł',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -189,7 +188,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                             ),
                           ),
                           Text(
-                            ' z ${collection.targetAmount.toInt()} zł',
+                            ' out of ${collection.targetAmount.toStringAsFixed(2)} zł',
                             style: TextStyle(
                               fontSize: 18,
                               color: AppColors.gray,
@@ -208,7 +207,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                             ),
                           ),
                           FractionallySizedBox(
-                            widthFactor: progress,
+                            widthFactor: progress.clamp(0, 1),
                             child: Container(
                               height: 8,
                               decoration: BoxDecoration(
@@ -234,7 +233,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                         )
                       else
                         FractionallySizedBox(
-                          widthFactor: progress,
+                          widthFactor: progress.clamp(0, 1),
                           child: Align(
                             alignment: Alignment.centerRight,
                             child: Text(

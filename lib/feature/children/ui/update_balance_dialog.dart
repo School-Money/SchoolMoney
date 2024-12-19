@@ -42,7 +42,7 @@ class _UpdateBalanceDialogState extends State<UpdateBalanceDialog> {
               const SizedBox(height: 24),
               AuthTextField(
                 controller: _balanceController,
-                hintText: 'Amount',
+                hintText: 'Amount in zł',
                 prefixIcon: Icons.monetization_on,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
