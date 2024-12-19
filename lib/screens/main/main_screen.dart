@@ -22,8 +22,15 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  String currentPage = '/home';
+  late String currentPage;
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  @override
+  void initState() {
+    super.initState();
+    currentPage =
+        context.read<AuthProvider>().isAdmin ? '/admin-parents' : '/home';
+  }
 
   void _navigateToPage(String page) {
     setState(() {
@@ -92,7 +99,9 @@ class _MainScreenState extends State<MainScreen> {
                 break;
               case '/home':
               default:
-                page = const HomeScreen();
+                page = context.read<AuthProvider>().isAdmin
+                    ? const AdminParentsScreen()
+                    : const HomeScreen();
                 break;
             }
 

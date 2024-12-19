@@ -32,12 +32,6 @@ class _AdminCollectionsScreenState extends State<AdminCollectionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:
-            Text('Collections', style: TextStyle(color: AppColors.secondary)),
-        backgroundColor: Colors.grey,
-        elevation: 0,
-      ),
       body: Consumer<AdminProvider>(builder: (context, provider, child) {
         if (provider.isLoading) {
           return Center(child: CircularProgressIndicator());

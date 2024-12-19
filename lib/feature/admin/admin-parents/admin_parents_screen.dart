@@ -32,11 +32,6 @@ class _AdminParentsScreenState extends State<AdminParentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Parents', style: TextStyle(color: AppColors.secondary)),
-        backgroundColor: Colors.grey,
-        elevation: 0,
-      ),
       body: Consumer<AdminProvider>(builder: (context, provider, child) {
         if (provider.isLoading) {
           return Center(child: CircularProgressIndicator());
