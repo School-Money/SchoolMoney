@@ -194,16 +194,6 @@ class _EditCollectionDialogState extends State<EditCollectionDialog> {
         targetAmount: double.parse(_targetAmountController.text),
       );
 
-      String avatar;
-      if (kIsWeb && _webImage != null) {
-        // For web, you might want to handle this differently
-        avatar = 'web_image_placeholder';
-      } else if (!kIsWeb && _pickedFile != null) {
-        // For mobile, you might want to handle this differently
-        avatar = 'local_image_placeholder';
-      } else {
-        avatar = _existingAvatarUrl ?? 'https://example.com/default-avatar.jpg';
-      }
       final imageFile = kIsWeb
           ? _webImage
           : _pickedFile != null

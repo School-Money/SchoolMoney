@@ -4,7 +4,6 @@ import 'package:school_money/components/main/search_text_field.dart';
 import 'package:school_money/constants/app_colors.dart';
 import 'package:school_money/feature/collections/collections_provider.dart';
 import 'package:school_money/feature/collections/ui/collections_card.dart';
-import 'package:school_money/feature/collections/ui/collections_details_screen.dart';
 
 class CollectionsScreen extends StatefulWidget {
   const CollectionsScreen({super.key});
@@ -43,7 +42,6 @@ class _CollectionsScreenState extends State<CollectionsScreen> {
               ),
             ),
             const SizedBox(height: 32),
-
             Expanded(
               child: Consumer<CollectionsProvider>(
                 builder: (context, provider, child) {

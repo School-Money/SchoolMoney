@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:school_money/feature/profile/profile_service.dart';
 import 'model/profile.dart';
-import 'dart:typed_data';
 
 class ProfileProvider extends ChangeNotifier {
   final ProfileService _profileService = ProfileService();
