@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/feature/collections/collections_provider.dart';
@@ -23,10 +27,12 @@ class _EditCollectionDialogState extends State<EditCollectionDialog> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
   late TextEditingController _targetAmountController;
-  ValueNotifier<DateTime?> startDateNotifier = ValueNotifier(null);
-  ValueNotifier<DateTime?> endDateNotifier = ValueNotifier(null);
-  ValueNotifier<String?> imagePathNotifier = ValueNotifier(null);
+  late ValueNotifier<DateTime?> startDateNotifier;
+  late ValueNotifier<DateTime?> endDateNotifier;
   bool _isCreating = false;
+  XFile? _pickedFile;
+  Uint8List? _webImage;
+  String? _existingAvatarUrl;
 
   @override
   void initState() {
@@ -40,6 +46,17 @@ class _EditCollectionDialogState extends State<EditCollectionDialog> {
     _targetAmountController = TextEditingController(
       text: widget.existingCollection.targetAmount.toString(),
     );
+    startDateNotifier = ValueNotifier(
+      DateTime.fromMicrosecondsSinceEpoch(
+        widget.existingCollection.startDate.millisecondsSinceEpoch * 1000,
+      ),
+    );
+    endDateNotifier = ValueNotifier(
+      DateTime.fromMicrosecondsSinceEpoch(
+        widget.existingCollection.endDate.millisecondsSinceEpoch * 1000,
+      ),
+    );
+    _existingAvatarUrl = widget.existingCollection.logo;
   }
 
   @override
@@ -49,7 +66,6 @@ class _EditCollectionDialogState extends State<EditCollectionDialog> {
     _targetAmountController.dispose();
     startDateNotifier.dispose();
     endDateNotifier.dispose();
-    imagePathNotifier.dispose();
     super.dispose();
   }
 
@@ -65,6 +81,54 @@ class _EditCollectionDialogState extends State<EditCollectionDialog> {
     if (pickedDate != null) {
       dateNotifier.value = pickedDate;
     }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final pickedFile = await ImagePicker().pickImage(source: source);
+      if (pickedFile != null) {
+        var newImage;
+        if (kIsWeb) {
+          newImage = await pickedFile.readAsBytes();
+        }
+        setState(() {
+          _pickedFile = pickedFile;
+          _webImage = newImage;
+          _existingAvatarUrl =
+              null; // Clear existing URL when new image is picked
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick image: $e')),
+      );
+    }
+  }
+
+  Widget _buildAvatar() {
+    // Priority: Web Image > Picked File > Existing Network Image > Default
+    if (kIsWeb && _webImage != null) {
+      return CircleAvatar(
+        radius: 80,
+        backgroundImage: MemoryImage(_webImage!),
+      );
+    } else if (!kIsWeb && _pickedFile != null) {
+      return CircleAvatar(
+        radius: 80,
+        backgroundImage: FileImage(File(_pickedFile!.path)),
+      );
+    } else if (_existingAvatarUrl != null) {
+      return CircleAvatar(
+        radius: 80,
+        backgroundImage: NetworkImage(_existingAvatarUrl!),
+      );
+    }
+
+    return CircleAvatar(
+      radius: 80,
+      backgroundColor: AppColors.secondary,
+      child: Icon(Icons.person, size: 80, color: AppColors.primary),
+    );
   }
 
   Widget _buildDatePickerTheme(BuildContext context, Widget? child) {
@@ -130,9 +194,25 @@ class _EditCollectionDialogState extends State<EditCollectionDialog> {
         targetAmount: double.parse(_targetAmountController.text),
       );
 
+      String avatar;
+      if (kIsWeb && _webImage != null) {
+        // For web, you might want to handle this differently
+        avatar = 'web_image_placeholder';
+      } else if (!kIsWeb && _pickedFile != null) {
+        // For mobile, you might want to handle this differently
+        avatar = 'local_image_placeholder';
+      } else {
+        avatar = _existingAvatarUrl ?? 'https://example.com/default-avatar.jpg';
+      }
+      final imageFile = kIsWeb
+          ? _webImage
+          : _pickedFile != null
+              ? File(_pickedFile!.path)
+              : null;
+
       await context
           .read<CollectionsProvider>()
-          .updateCollectionDetails(collectionDetails);
+          .updateCollectionDetails(collectionDetails, imageFile);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -190,6 +270,24 @@ class _EditCollectionDialogState extends State<EditCollectionDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Center(
+                  child: Column(
+                    children: [
+                      _buildAvatar(),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () => _pickImage(ImageSource.gallery),
+                        icon: Icon(Icons.edit, color: AppColors.primary),
+                        label: Text('Change collection image',
+                            style: TextStyle(color: AppColors.primary)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.secondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
                 CustomTextField(
                   controller: _nameController,
                   hintText: 'Collection Name',

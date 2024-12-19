@@ -32,12 +32,17 @@ class CollectionsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateCollectionDetails(EditCollectionPayload payload) async {
+  Future<void> updateCollectionDetails(
+      EditCollectionPayload payload, dynamic imageInput) async {
     _isLoading = true;
     notifyListeners();
 
     try {
       await _collectionService.updateCollection(payload);
+      if (imageInput != null) {
+        await _collectionService.updateCollectionAvatar(imageInput, payload.id);
+      }
+      await getCollectionDetails(payload.id);
     } finally {
       _isLoading = false;
       notifyListeners();

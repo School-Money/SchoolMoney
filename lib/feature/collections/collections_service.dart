@@ -1,5 +1,10 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http_parser/http_parser.dart';
+import 'package:mime/mime.dart';
 import 'package:school_money/feature/collections/model/collectionDetails/collection_details.dart';
 import 'package:school_money/feature/collections/model/create_collections_payload.dart';
 import 'package:school_money/feature/collections/model/edit_collection_payload.dart';
@@ -65,6 +70,52 @@ class CollectionsService {
       await _authService.authenticatedDio.post(
         '$_baseUrl/collections',
         data: payload.toJson(),
+      );
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(
+            'Error creating collection: ${e.response?.data['message'] ?? e.response?.statusCode}');
+      } else {
+        throw Exception('Server connection error: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  Future<void> updateCollectionAvatar(
+      dynamic imageInput, String collectionId) async {
+    MultipartFile multipartFile;
+
+    if (imageInput is File) {
+      String? mimeType = lookupMimeType(imageInput.path);
+      multipartFile = await MultipartFile.fromFile(
+        imageInput.path,
+        contentType: MediaType.parse(mimeType ?? 'image/jpeg'),
+      );
+    } else if (imageInput is Uint8List) {
+      multipartFile = MultipartFile.fromBytes(
+        imageInput,
+        filename: 'profile_photo.png',
+        contentType: MediaType('image', 'png'),
+      );
+    } else {
+      throw ArgumentError('Unsupported image input type');
+    }
+
+    final formData = FormData.fromMap({
+      'file': multipartFile,
+    });
+
+    try {
+      await _authService.authenticatedDio.patch(
+        '$_baseUrl/collections/$collectionId/logo',
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
       );
     } on DioException catch (e) {
       if (e.response != null) {
