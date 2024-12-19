@@ -477,7 +477,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                             ),
                           ),
                           Text(
-                            '${payment.amount} zł',
+                            '${payment.amount.toStringAsFixed(2)} zł',
                             style: TextStyle(
                               fontSize: 14,
                               color: AppColors.accent,
