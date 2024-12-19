@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/components/chat/chat_dialog.dart';
 import 'package:school_money/constants/app_colors.dart';
-import 'package:school_money/feature/classes/classes_provider.dart';
 import 'package:school_money/feature/classes/model/class.dart';
 
 class ClassCard extends StatelessWidget {

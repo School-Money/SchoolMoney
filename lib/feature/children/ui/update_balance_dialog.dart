@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:school_money/feature/children/model/child_create_payload.dart';
-import 'package:intl/intl.dart';
 
 import '../../../components/auth/auth_button.dart';
 import '../../../components/auth/auth_text_field.dart';

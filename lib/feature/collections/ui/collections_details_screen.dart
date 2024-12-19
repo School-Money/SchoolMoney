@@ -7,6 +7,7 @@ import 'package:school_money/feature/collections/collections_provider.dart';
 import 'package:school_money/feature/collections/model/collectionDetails/collection_details.dart';
 import 'package:school_money/feature/collections/model/payment/payment.dart';
 import 'package:school_money/feature/collections/ui/creator_payment_collection_dialog.dart';
+import 'package:school_money/feature/collections/ui/edit_collection_dialog.dart';
 import 'package:school_money/feature/collections/ui/payment_collection_dialog.dart';
 
 class CollectionsDetailsScreen extends StatefulWidget {
@@ -335,7 +336,7 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                                   ),
                                 ),
                                 const SizedBox(height: 16),
-                                if (collection.creator.id == _userId)
+                                if (collection.creator.id == _userId) ...[
                                   ConstrainedBox(
                                     constraints:
                                         const BoxConstraints(maxWidth: 200),
@@ -380,6 +381,33 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                                       },
                                     ),
                                   ),
+                                  const SizedBox(height: 16),
+                                  ConstrainedBox(
+                                    constraints:
+                                        const BoxConstraints(maxWidth: 200),
+                                    child: AuthButton(
+                                      variant: ButtonVariant.alternative,
+                                      text: 'Edit',
+                                      onPressed: () async {
+                                        await showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                EditCollectionDialog(
+                                                    existingCollection:
+                                                        collection));
+
+                                        if (context.mounted) {
+                                          // Navigator.of(context).pop();
+
+                                          await context
+                                              .read<CollectionsProvider>()
+                                              .getCollectionDetails(
+                                                  widget.collectionId);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ],
                             ),
                         ],

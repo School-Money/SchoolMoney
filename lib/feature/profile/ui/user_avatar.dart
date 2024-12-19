@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:typed_data';
 
 class UserAvatar extends StatelessWidget {
   final String name;

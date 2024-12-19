@@ -3,6 +3,7 @@ import 'package:school_money/feature/collections/collections_service.dart';
 import 'package:school_money/feature/collections/model/collection.dart';
 import 'package:school_money/feature/collections/model/collectionDetails/collection_details.dart';
 import 'package:school_money/feature/collections/model/create_collections_payload.dart';
+import 'package:school_money/feature/collections/model/edit_collection_payload.dart';
 import 'package:school_money/feature/collections/model/payment/payment_details.dart';
 import 'package:school_money/screens/main/home_screen.dart';
 
@@ -25,6 +26,23 @@ class CollectionsProvider extends ChangeNotifier {
       _collections = await _collectionService.getCollections();
     } catch (e) {
       // nothing
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateCollectionDetails(
+      EditCollectionPayload payload, dynamic imageInput) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      await _collectionService.updateCollection(payload);
+      if (imageInput != null) {
+        await _collectionService.updateCollectionAvatar(imageInput, payload.id);
+      }
+      await getCollectionDetails(payload.id);
     } finally {
       _isLoading = false;
       notifyListeners();

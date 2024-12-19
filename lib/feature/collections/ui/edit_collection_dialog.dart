@@ -1,34 +1,63 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:school_money/components/auth/auth_button.dart';
 import 'package:school_money/feature/collections/collections_provider.dart';
-import 'package:school_money/feature/collections/model/create_collections_payload.dart';
+import 'package:school_money/feature/collections/model/collectionDetails/collection_details.dart';
+import 'package:school_money/feature/collections/model/edit_collection_payload.dart';
 import 'package:school_money/feature/collections/ui/custom_date_picker.dart';
 import 'package:school_money/feature/collections/ui/custom_textfield.dart';
 import '../../../constants/app_colors.dart';
 
-class CreateCollectionDialog extends StatefulWidget {
-  final String classId;
+class EditCollectionDialog extends StatefulWidget {
+  final CollectionDetails existingCollection;
 
-  const CreateCollectionDialog({
-    super.key,
-    required this.classId,
-  });
+  const EditCollectionDialog({super.key, required this.existingCollection});
 
   @override
-  State<CreateCollectionDialog> createState() => _CreateCollectionDialogState();
+  State<EditCollectionDialog> createState() => _EditCollectionDialogState();
 }
 
-class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
+class _EditCollectionDialogState extends State<EditCollectionDialog> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _descriptionController = TextEditingController();
-  final _targetAmountController = TextEditingController();
-  ValueNotifier<DateTime?> startDateNotifier = ValueNotifier(null);
-  ValueNotifier<DateTime?> endDateNotifier = ValueNotifier(null);
-  ValueNotifier<String?> imagePathNotifier = ValueNotifier(null);
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _targetAmountController;
+  late ValueNotifier<DateTime?> startDateNotifier;
+  late ValueNotifier<DateTime?> endDateNotifier;
   bool _isCreating = false;
+  XFile? _pickedFile;
+  Uint8List? _webImage;
+  String? _existingAvatarUrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController = TextEditingController(
+      text: widget.existingCollection.title,
+    );
+    _descriptionController = TextEditingController(
+      text: widget.existingCollection.description,
+    );
+    _targetAmountController = TextEditingController(
+      text: widget.existingCollection.targetAmount.toString(),
+    );
+    startDateNotifier = ValueNotifier(
+      DateTime.fromMicrosecondsSinceEpoch(
+        widget.existingCollection.startDate.millisecondsSinceEpoch * 1000,
+      ),
+    );
+    endDateNotifier = ValueNotifier(
+      DateTime.fromMicrosecondsSinceEpoch(
+        widget.existingCollection.endDate.millisecondsSinceEpoch * 1000,
+      ),
+    );
+    _existingAvatarUrl = widget.existingCollection.logo;
+  }
 
   @override
   void dispose() {
@@ -37,7 +66,6 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
     _targetAmountController.dispose();
     startDateNotifier.dispose();
     endDateNotifier.dispose();
-    imagePathNotifier.dispose();
     super.dispose();
   }
 
@@ -53,6 +81,54 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
     if (pickedDate != null) {
       dateNotifier.value = pickedDate;
     }
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final pickedFile = await ImagePicker().pickImage(source: source);
+      if (pickedFile != null) {
+        var newImage;
+        if (kIsWeb) {
+          newImage = await pickedFile.readAsBytes();
+        }
+        setState(() {
+          _pickedFile = pickedFile;
+          _webImage = newImage;
+          _existingAvatarUrl =
+              null; // Clear existing URL when new image is picked
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to pick image: $e')),
+      );
+    }
+  }
+
+  Widget _buildAvatar() {
+    // Priority: Web Image > Picked File > Existing Network Image > Default
+    if (kIsWeb && _webImage != null) {
+      return CircleAvatar(
+        radius: 80,
+        backgroundImage: MemoryImage(_webImage!),
+      );
+    } else if (!kIsWeb && _pickedFile != null) {
+      return CircleAvatar(
+        radius: 80,
+        backgroundImage: FileImage(File(_pickedFile!.path)),
+      );
+    } else if (_existingAvatarUrl != null) {
+      return CircleAvatar(
+        radius: 80,
+        backgroundImage: NetworkImage(_existingAvatarUrl!),
+      );
+    }
+
+    return CircleAvatar(
+      radius: 80,
+      backgroundColor: AppColors.secondary,
+      child: Icon(Icons.person, size: 80, color: AppColors.primary),
+    );
   }
 
   Widget _buildDatePickerTheme(BuildContext context, Widget? child) {
@@ -81,7 +157,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
     }
   }
 
-  Future<void> _createCollection() async {
+  Future<void> _editCollection() async {
     if (_isCreating) return;
 
     setState(() {
@@ -109,24 +185,29 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
     }
 
     try {
-      final collectionDetails = CreateCollectionPayload(
+      final collectionDetails = EditCollectionPayload(
+        id: widget.existingCollection.id,
         title: _nameController.text,
         description: _descriptionController.text,
-        classId: widget.classId,
         startDate: startDateNotifier.value!.millisecondsSinceEpoch ~/ 1000,
         endDate: endDateNotifier.value!.millisecondsSinceEpoch ~/ 1000,
         targetAmount: double.parse(_targetAmountController.text),
-        logo: imagePathNotifier.value,
       );
+
+      final imageFile = kIsWeb
+          ? _webImage
+          : _pickedFile != null
+              ? File(_pickedFile!.path)
+              : null;
 
       await context
           .read<CollectionsProvider>()
-          .createCollection(collectionDetails);
+          .updateCollectionDetails(collectionDetails, imageFile);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Collection created successfully'),
+            content: Text('Collection updated successfully'),
             backgroundColor: Colors.green,
           ),
         );
@@ -138,7 +219,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create collection: $e'),
+            content: Text('Failed to update collection: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -164,7 +245,7 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
         ),
       ),
       title: Text(
-        'New Collection',
+        'Edit Collection',
         style: TextStyle(
           color: AppColors.secondary,
           fontWeight: FontWeight.bold,
@@ -179,6 +260,24 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Center(
+                  child: Column(
+                    children: [
+                      _buildAvatar(),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: () => _pickImage(ImageSource.gallery),
+                        icon: Icon(Icons.edit, color: AppColors.primary),
+                        label: Text('Change collection image',
+                            style: TextStyle(color: AppColors.primary)),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.secondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
                 CustomTextField(
                   controller: _nameController,
                   hintText: 'Collection Name',
@@ -276,8 +375,8 @@ class _CreateCollectionDialogState extends State<CreateCollectionDialog> {
           SizedBox(
             width: 100,
             child: AuthButton(
-              onPressed: _createCollection,
-              text: 'Create',
+              onPressed: _editCollection,
+              text: 'Edit',
             ),
           ),
       ],

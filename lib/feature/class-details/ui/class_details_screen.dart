@@ -6,7 +6,6 @@ import 'package:school_money/feature/classes/model/user_details.dart';
 import '../../../auth/auth_service.dart';
 import '../../../components/student_card.dart';
 import '../../../constants/app_colors.dart';
-import '../../collections/ui/collections_details_screen.dart';
 import '../../collections/ui/create_collection_dialog.dart';
 import '../../classes/classes_provider.dart';
 import '../model/class_details.dart';
@@ -119,7 +118,8 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
                       ScaffoldMessenger.of(context).clearSnackBars();
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: const Text('Invite code copied to clipboard'),
+                          content:
+                              const Text('Invite code copied to clipboard'),
                           backgroundColor: Colors.green.withOpacity(0.5),
                         ),
                       );
