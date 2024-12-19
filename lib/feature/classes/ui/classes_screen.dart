@@ -98,7 +98,12 @@ class ClassesScreenState extends State<ClassesScreen> {
                     color: AppColors.accent,
                   )
                 : ElevatedButton(
-                    onPressed: _createClass,
+                    onPressed: () async {
+                      await _createClass();
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.accent,
                     ),
