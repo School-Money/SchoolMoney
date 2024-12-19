@@ -63,7 +63,7 @@ class CollectionsProvider extends ChangeNotifier {
     try {
       await _collectionService.createAPayment(paymentDetails);
     } catch (e) {
-      // nothing
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();

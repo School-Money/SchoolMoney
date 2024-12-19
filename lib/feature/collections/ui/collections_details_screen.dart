@@ -308,13 +308,6 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                                                   .read<CollectionsProvider>()
                                                   .createAPayment(
                                                       paymentDetails);
-
-                                              if (context.mounted) {
-                                                await context
-                                                    .read<CollectionsProvider>()
-                                                    .getCollectionDetails(
-                                                        widget.collectionId);
-                                              }
                                             } catch (e) {
                                               if (context.mounted) {
                                                 ScaffoldMessenger.of(context)
@@ -327,7 +320,14 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                                                 );
                                               }
                                             } finally {
-                                              Navigator.of(context).pop();
+                                              if (context.mounted) {
+                                                Navigator.of(context).pop();
+
+                                                await context
+                                                    .read<CollectionsProvider>()
+                                                    .getCollectionDetails(
+                                                        widget.collectionId);
+                                              }
                                             }
                                           },
                                         ),
@@ -355,14 +355,6 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                                                     .read<CollectionsProvider>()
                                                     .createAPayment(
                                                         paymentDetails);
-
-                                                if (context.mounted) {
-                                                  await context
-                                                      .read<
-                                                          CollectionsProvider>()
-                                                      .getCollectionDetails(
-                                                          widget.collectionId);
-                                                }
                                               } catch (e) {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
@@ -373,7 +365,15 @@ class _CollectionsDetailsScreenState extends State<CollectionsDetailsScreen> {
                                                   ),
                                                 );
                                               } finally {
-                                                Navigator.of(context).pop();
+                                                if (context.mounted) {
+                                                  Navigator.of(context).pop();
+
+                                                  await context
+                                                      .read<
+                                                          CollectionsProvider>()
+                                                      .getCollectionDetails(
+                                                          widget.collectionId);
+                                                }
                                               }
                                             },
                                           ),
