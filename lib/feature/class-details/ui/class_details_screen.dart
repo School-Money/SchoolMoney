@@ -297,12 +297,6 @@ class _ClassDetailsScreenState extends State<ClassDetailsScreen> {
           ),
         ),
       ),
-      floatingActionButton: _classDetails?.isTreasurer == true
-          ? FloatingActionButton(
-              onPressed: () {},
-              child: const Icon(Icons.add),
-            )
-          : null,
     );
   }
 }
